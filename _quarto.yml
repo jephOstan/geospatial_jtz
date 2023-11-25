@@ -5,8 +5,11 @@ website:
   title: "geospatial_jtz"
   navbar:
     left: 
-      - text: References & Notes
-      
+      - text: Hands-On
+        menu:
+          - text: Data Wrangling Technique
+            href: ho/ho1_1.qmd 
+            
     right:
       - href: index.qmd
         text: Home
