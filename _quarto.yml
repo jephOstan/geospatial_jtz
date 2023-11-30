@@ -2,7 +2,8 @@ project:
   type: website
 
 website:
-  title: "geospatial_jtz"
+  google-analytics: "G-SGM5SNE7BQ"
+  title: "Geospatial_analytics"
   navbar:
     left: 
       - text: Hands-On
@@ -17,7 +18,7 @@ website:
 
 format:
   html:
-    theme: cosmo
+    theme: sandstone
     css: styles.css
     toc: true
 

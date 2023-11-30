@@ -1,7 +1,22 @@
 ---
-title: "geospatial_jtz"
+title: "GEOSPATIAL ANALYTICS"
+subtitle: with R Markdown, R Studio and Quarto
+website: 
+    google-analytics: "G-SGM5SNE7BQ"
+format:
+  html:
+    code-overflow: wrap
+    code-fold: true
+    code-summary: "Show the code"
+    css: styles.css
 ---
 
-This is a Quarto website.
+::: {.callout-caution collapse="true"}
+## Content Disclaimer
 
-test changes.
+This micro-site is intended as a personal portfolio and for sharing a learning journey only.
+
+Other than common facts or quotes from other parties, any views, opinions, or comments herein represented in this site are personal and belong solely to the site owner and do not represent those people, institutions or organisations that the owner may or may not be associated with professionally or within a personal capacity unless explicitly stated.
+
+This site's owner makes no representation of the accuracy or completeness of any display information or any link on this site. The owner will not be liable for any errors, omissions or availability of any information. The owner will not be liable for any of your losses, injuries, or damages from using the content within this site.
+:::
