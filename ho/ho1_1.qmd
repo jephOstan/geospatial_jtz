@@ -405,6 +405,7 @@ mpsz3414 <- mpsz3414 %>%
 For quick assessment or non-publication usage -
 
 ```{r}
+#| fig-width: 8
 #| fig-asp: 0.68
 
 hist(mpsz3414$`PreSch Density`)
@@ -413,7 +414,7 @@ hist(mpsz3414$`PreSch Density`)
 For a more fine-tuned / customised histogram -
 
 ```{r}
-#| fig-width: 14
+#| fig-width: 8
 #| fig-asp: 0.68
 
 ggplot(data = mpsz3414, 
@@ -421,14 +422,14 @@ ggplot(data = mpsz3414,
   geom_histogram(bins = 20, 
                  color = "white", 
                  fill = "salmon") +
-  labs(title = "Are pres-chool evenly distributed in Singapore?",
-       subtitle = "The histogram illustrates a right-skewed distribution of pre-school density per square kilometre across \nPlanning Subzones. The tail of the distribution extends to the right, indicating outliers or exceptional Subzones \nwith preschool densities considerably above the norm.",
+  labs(title = "DISTRIBUTION OF PRE-SCHOOL DENSITY ACROSS SGP PLANNING SUBZONES",
+       subtitle = "The histogram illustrates a right-skewed distribution of pre-school density per square kilometre across Planning Subzones. \nThe tail of the distribution extends to the right, indicating outliers or exceptional Subzones \nwith preschool densities considerably above the norm.",
        x = "Pre-school Density (per km sq)",
        y = "Frequency") +
-  theme(plot.title = element_text (size = 16, 
+  theme(plot.title = element_text (size = 14, 
                                    colour = "#302f2f",
                                    face = "bold"),
-        plot.subtitle = element_text(size = 9,
+        plot.subtitle = element_text(size = 9.5,
                                      colour = "#424242",
                                      face = "italic"))
   
@@ -439,7 +440,7 @@ ggplot(data = mpsz3414,
 Show relationship between `Pre-school Density` and `Pre-school Count`.
 
 ```{r}
-#| fig-width: 14
+#| fig-width: 8
 #| fig-asp: 0.68
 ggplot(data = mpsz3414, 
        aes(y = `PreSch Count`, 
@@ -448,14 +449,14 @@ ggplot(data = mpsz3414,
              fill = "salmon") +
   xlim(0, 40) +
   ylim(0, 40) +
-  labs(title = "Spatial Distribution of Pre-School Facilities",
+  labs(title = "SPATIAL DISTRIBUTION OF SINGAPORE PRE-SCHOOL FACILITIES",
        subtitle = "Correlation Between Pre-School Count and Density per Square Kilometer Across Subzones",
        x = "Pre-school density (per km sq)",
        y = "Pre-school count") +
-  theme(plot.title = element_text (size = 16, 
+  theme(plot.title = element_text (size = 14, 
                                    colour = "#302f2f",
                                    face = "bold"),
-        plot.subtitle = element_text(size = 9,
+        plot.subtitle = element_text(size = 11,
                                      colour = "#424242",
                                      face = "italic"))
 ```
