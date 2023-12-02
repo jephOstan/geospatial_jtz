@@ -87,7 +87,7 @@ Metrics used in the output above -
 
 #### 1.2.1.2 Polyline feature data in shapefile format
 
-Import cycling path from [LTADataMall](https://datamall.lta.gov.sg/content/datamall/en.html)
+Import cycling path from [LTADataMall](https://datamall.lta.gov.sg/content/datamall/en.html).
 
 ```{r}
 cyclingPath = st_read(dsn = "data/geospatial",
@@ -179,6 +179,8 @@ From the output above, latitude and longitude are in decimal degree format, whic
 :::
 
 ```{r}
+#| fig-width: 14
+#| fig-asp: 0.68
 plot(mpsz)
 ```
 
@@ -403,6 +405,8 @@ mpsz3414 <- mpsz3414 %>%
 For quick assessment or non-publication usage -
 
 ```{r}
+#| fig-asp: 0.68
+
 hist(mpsz3414$`PreSch Density`)
 ```
 
@@ -410,15 +414,24 @@ For a more fine-tuned / customised histogram -
 
 ```{r}
 #| fig-width: 14
+#| fig-asp: 0.68
+
 ggplot(data = mpsz3414, 
        aes(x = as.numeric(`PreSch Density`))) +
   geom_histogram(bins = 20, 
-                 color = "black", 
+                 color = "white", 
                  fill = "salmon") +
-  labs(title = "Are pre-school even distributed in Singapore?",
-       subtitle = "There are many planning sub-zones with a single pre-school, on the other hand, \nthere are two planning sub-zones with at least 20 pre-schools",
-       x = "Pre-school density (per km sq)",
-       y = "Frequency")
+  labs(title = "Are pres-chool evenly distributed in Singapore?",
+       subtitle = "The histogram illustrates a right-skewed distribution of pre-school density per square kilometre across \nPlanning Subzones. The tail of the distribution extends to the right, indicating outliers or exceptional Subzones \nwith preschool densities considerably above the norm.",
+       x = "Pre-school Density (per km sq)",
+       y = "Frequency") +
+  theme(plot.title = element_text (size = 16, 
+                                   colour = "#302f2f",
+                                   face = "bold"),
+        plot.subtitle = element_text(size = 9,
+                                     colour = "#424242",
+                                     face = "italic"))
+  
 ```
 
 ## 4.2 Scatterplot
@@ -427,7 +440,7 @@ Show relationship between `Pre-school Density` and `Pre-school Count`.
 
 ```{r}
 #| fig-width: 14
-#| fig-height: 10
+#| fig-asp: 0.68
 ggplot(data = mpsz3414, 
        aes(y = `PreSch Count`, 
            x = as.numeric(`PreSch Density`))) +
@@ -435,7 +448,14 @@ ggplot(data = mpsz3414,
              fill = "salmon") +
   xlim(0, 40) +
   ylim(0, 40) +
-  labs(title = "",
+  labs(title = "Spatial Distribution of Pre-School Facilities",
+       subtitle = "Correlation Between Pre-School Count and Density per Square Kilometer Across Subzones",
        x = "Pre-school density (per km sq)",
-       y = "Pre-school count")
+       y = "Pre-school count") +
+  theme(plot.title = element_text (size = 16, 
+                                   colour = "#302f2f",
+                                   face = "bold"),
+        plot.subtitle = element_text(size = 9,
+                                     colour = "#424242",
+                                     face = "italic"))
 ```
