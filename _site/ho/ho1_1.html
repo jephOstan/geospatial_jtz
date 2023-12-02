@@ -189,6 +189,25 @@ gtag('config', 'G-SGM5SNE7BQ', { 'anonymize_ip': true});
   </ul></li>
   <li><a href="#aspatial-data-frame-transformation" id="toc-aspatial-data-frame-transformation" class="nav-link" data-scroll-target="#aspatial-data-frame-transformation"><strong>2.2 Aspatial Data Frame Transformation</strong></a></li>
   </ul></li>
+  <li><a href="#geospatial-analysis" id="toc-geospatial-analysis" class="nav-link" data-scroll-target="#geospatial-analysis"><strong>3. GEOSPATIAL ANALYSIS</strong></a>
+  <ul class="collapse">
+  <li><a href="#buffering" id="toc-buffering" class="nav-link" data-scroll-target="#buffering">3.1 Buffering</a>
+  <ul class="collapse">
+  <li><a href="#create-buffer-distance" id="toc-create-buffer-distance" class="nav-link" data-scroll-target="#create-buffer-distance">3.1.1 Create buffer distance</a></li>
+  <li><a href="#calculate-buffer-area" id="toc-calculate-buffer-area" class="nav-link" data-scroll-target="#calculate-buffer-area">3.1.2 Calculate buffer / area</a></li>
+  </ul></li>
+  <li><a href="#point-in-polygon-pip-count" id="toc-point-in-polygon-pip-count" class="nav-link" data-scroll-target="#point-in-polygon-pip-count">3.2 Point-in-Polygon (PIP) Count</a>
+  <ul class="collapse">
+  <li><a href="#intersection-calculate" id="toc-intersection-calculate" class="nav-link" data-scroll-target="#intersection-calculate">3.2.1 Intersection &amp; calculate</a></li>
+  <li><a href="#sort-listing" id="toc-sort-listing" class="nav-link" data-scroll-target="#sort-listing">3.2.2 Sort listing</a></li>
+  <li><a href="#compute-density" id="toc-compute-density" class="nav-link" data-scroll-target="#compute-density">3.2.3 Compute density</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#exploratory-data-analysis-eda" id="toc-exploratory-data-analysis-eda" class="nav-link" data-scroll-target="#exploratory-data-analysis-eda">4. EXPLORATORY DATA ANALYSIS (EDA)</a>
+  <ul class="collapse">
+  <li><a href="#histogram" id="toc-histogram" class="nav-link" data-scroll-target="#histogram">4.1 Histogram</a></li>
+  <li><a href="#scatterplot" id="toc-scatterplot" class="nav-link" data-scroll-target="#scatterplot">4.2 Scatterplot</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -216,7 +235,7 @@ gtag('config', 'G-SGM5SNE7BQ', { 'anonymize_ip': true});
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">November 30, 2023</p>
+      <p class="date-modified">December 2, 2023</p>
     </div>
   </div>
     
@@ -697,11 +716,11 @@ PROJCRS["SVY21",
 </div>
 <div id="callout-12" class="callout-12-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p><span style="color:#d46e15"><strong><em>st_as_sf( )</em></strong> - sf -</span> to convert aspatial object, i.e., <code>listings</code> to an sf object.</p>
+<p><span style="color:#d46e15"><strong><em>st_as_sf( )</em></strong> - sf -</span> to convert aspatial object, i.e., <em><code>listings</code></em> to an sf object.</p>
 <ul>
 <li><p><em>coords</em> - provide x-coordinates first before y-coordinates.</p></li>
-<li><p><em>crs</em> - define the coordinates reference system with 4326.</p></li>
-<li><p><em>%&gt;%</em> - to nest <em>st_transform()</em> to transform the newly created simple feature data frame into svy21 projected CRS..</p></li>
+<li><p><em>crs</em> - define the coordinates reference system with <code>EPSG : 4326</code> ( <strong><code>wgs84</code></strong> Geographic Coordinate System)</p></li>
+<li><p><em>%&gt;%</em> - to nest <code>st_transform( )</code> to transform the newly created simple feature data frame into <code>EPSG : 3414</code> which is Singapore’s <code>SVY21</code> projected CRS.</p></li>
 </ul>
 </div>
 </div>
@@ -738,6 +757,224 @@ $ geometry                       &lt;POINT [m]&gt; POINT (22646.02 35167.9…</c
 </div>
 <p>A new column, <code>geometry</code> is introduced while <code>longitude</code> &amp; <code>latitude</code> are dropped from the data frame.</p>
 <p><br></p>
+</section>
+</section>
+<section id="geospatial-analysis" class="level1">
+<h1><strong>3. GEOSPATIAL ANALYSIS</strong></h1>
+<section id="buffering" class="level2">
+<h2 class="anchored" data-anchor-id="buffering">3.1 Buffering</h2>
+<p><a href="https://www.geographyrealm.com/buffers-in-gis/">Buffering</a> is a GIS technique to define an area bidirectional or setback of distance or width from a geographic feature (point, line or polygon).</p>
+<p>Below are some of use cases for this GIS technique -</p>
+<ol type="1">
+<li><p><strong>Ecological Studies</strong>: Determining impact zones around protected wildlife areas to analyse potential effects of human activities on habitats.</p></li>
+<li><p><strong>Urban Planning</strong>: Establishing zones around public facilities like schools or hospitals to evaluate accessibility for nearby residents.</p></li>
+<li><p><strong>Transportation Engineering</strong>: Assessing areas within a certain radius of public transit lines to optimise service coverage and planning.</p></li>
+<li><p><strong>Emergency Preparedness</strong>: Creating zones around industrial plants to simulate the extent of potential chemical spills for evacuation planning.</p></li>
+<li><p><strong>Market Analysis</strong>: Defining catchment areas around retail stores to understand the demographic profile of potential customers living within a specific distance.</p></li>
+<li><p><strong>Environmental Protection</strong>: Designating buffer zones around rivers or lakes to protect water quality from adjacent land-use activities.</p></li>
+<li><p><strong>Risk Assessment</strong>: Evaluating flood risk by creating buffers along waterways that might overflow, affecting adjacent areas.</p></li>
+<li><p><strong>Agricultural Management</strong>: Determining pesticide-free zones around crop fields by buffering from schools or residential areas.</p></li>
+<li><p><strong>Public Safety</strong>: Analysing crime incidence by creating buffers around areas of interest, such as nightlife districts, to allocate police resources effectively.</p></li>
+<li><p><strong>Telecommunications</strong>: Planning network infrastructure by buffering around existing cell towers to identify areas with weak signal coverage for improvement.</p></li>
+</ol>
+<section id="create-buffer-distance" class="level3">
+<h3 class="anchored" data-anchor-id="create-buffer-distance">3.1.1 Create buffer distance</h3>
+<div class="callout callout-style-simple callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span style="color:#3a9c88"><strong>⇳ Usage of the code chunk below :</strong></span>
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><span style="color:#d46e15"><strong><em>st_buffer( )</em></strong> - sf -</span> to set geometric unary operation.</p>
+<ul>
+<li><p>dist - to set 5 metre buffer distance for <em><code>cyclingpath</code></em>.</p></li>
+<li><p>nQuadSegs - to set number of segments per quadrant.</p></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>buffer_cycling <span class="ot">&lt;-</span> <span class="fu">st_buffer</span>(cyclingPath, </span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>                            <span class="at">dist =</span> <span class="dv">5</span>, </span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>                            <span class="at">nQuadSegs =</span> <span class="dv">30</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="calculate-buffer-area" class="level3">
+<h3 class="anchored" data-anchor-id="calculate-buffer-area">3.1.2 Calculate buffer / area</h3>
+<div class="callout callout-style-simple callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span style="color:#3a9c88"><strong>⇳ Usage of the code chunk below :</strong></span>
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-14" class="callout-14-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><span style="color:#d46e15"><strong><em>st_area( )</em></strong> - sf -</span> to compute the buffered area in <em><code>buffer_cycling</code></em> . The area is introduced under a new attribute <code>area</code>.</p>
+<p>note - if st_area on <em><code>cyclingPath</code></em> will have 0 m<sup>2</sup> for area.</p>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>buffer_cycling<span class="sc">$</span>area <span class="ot">&lt;-</span> <span class="fu">st_area</span>(buffer_cycling)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(buffer_cycling<span class="sc">$</span>area)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>1556978 [m^2]</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="point-in-polygon-pip-count" class="level2">
+<h2 class="anchored" data-anchor-id="point-in-polygon-pip-count">3.2 Point-in-Polygon (PIP) Count</h2>
+<p>This GIS technique is used to determine how many point features (such as locations of schools, hospitals, or crime incidents) fall within polygon features (like municipal boundaries, neighborhoods, or zones).</p>
+<p>This technique is very useful for understanding the distribution and concentration of features across a geographic area and can inform policy decisions, resource allocation, or identify trends and patterns in spatial data.</p>
+<section id="intersection-calculate" class="level3">
+<h3 class="anchored" data-anchor-id="intersection-calculate">3.2.1 Intersection &amp; calculate</h3>
+<div class="callout callout-style-simple callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span style="color:#3a9c88"><strong>⇳ Usage of the code chunk below :</strong></span>
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-15" class="callout-15-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><span style="color:#d46e15"><strong><em>st_intersects( )</em></strong> - sf -</span> to identify pre-schools located inside each Planning Subzone.</p>
+<p><span style="color:#d46e15"><strong><em>length( )</em></strong> - base -</span> to aggregate and count the intersection points within each Planning Subzone.</p>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>mpsz3414<span class="sc">$</span><span class="st">`</span><span class="at">PreSch Count</span><span class="st">`</span><span class="ot">&lt;-</span> <span class="fu">lengths</span>(<span class="fu">st_intersects</span>(mpsz3414, preschool3414))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mpsz3414<span class="sc">$</span><span class="st">`</span><span class="at">PreSch Count</span><span class="st">`</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   0.00    0.00    3.00    5.96    9.00   58.00 </code></pre>
+</div>
+</div>
+</section>
+<section id="sort-listing" class="level3">
+<h3 class="anchored" data-anchor-id="sort-listing">3.2.2 Sort listing</h3>
+<div class="callout callout-style-simple callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span style="color:#3a9c88"><strong>⇳ Usage of the code chunk below :</strong></span>
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-16" class="callout-16-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><span style="color:#d46e15"><strong><em>top_n( x , n, wt)</em></strong> - dplyr -</span> to list the Planning Subzone with the most pre-schools.</p>
+<ul>
+<li><p>x - a data frame, in this case, <em><code>mpsz3414</code></em></p></li>
+<li><p>n - number of rows returned.</p></li>
+<li><p>wt - the variable for the sorting. If not specified, the last column will be used by default.</p></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">top_n</span>(mpsz3414, <span class="dv">3</span>, <span class="st">`</span><span class="at">PreSch Count</span><span class="st">`</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Simple feature collection with 3 features and 16 fields
+Geometry type: MULTIPOLYGON
+Dimension:     XY
+Bounding box:  xmin: 23449.05 ymin: 33973.71 xmax: 42940.57 ymax: 47996.47
+Projected CRS: SVY21 / Singapore TM
+  OBJECTID SUBZONE_NO      SUBZONE_N SUBZONE_C CA_IND PLN_AREA_N PLN_AREA_C
+1      189          2  TAMPINES EAST    TMSZ02      N   TAMPINES         TM
+2      199          4    BEDOK NORTH    BDSZ04      N      BEDOK         BD
+3      290          3 WOODLANDS EAST    WDSZ03      N  WOODLANDS         WD
+      REGION_N REGION_C          INC_CRC FMEL_UPD_D   X_ADDR   Y_ADDR
+1  EAST REGION       ER 21658EAAF84F4D8D 2014-12-05 41122.55 37392.39
+2  EAST REGION       ER A2254301F85C1EDF 2014-12-05 39429.21 34737.62
+3 NORTH REGION       NR C90769E43EE6B0F2 2014-12-05 24506.64 46991.63
+  SHAPE_Leng SHAPE_Area                       geometry PreSch Count
+1  10180.624    4339824 MULTIPOLYGON (((42196.76 38...           58
+2   8414.962    3203663 MULTIPOLYGON (((40284.24 35...           31
+3   6603.608    2553464 MULTIPOLYGON (((24786.75 46...           47</code></pre>
+</div>
+</div>
+</section>
+<section id="compute-density" class="level3">
+<h3 class="anchored" data-anchor-id="compute-density">3.2.3 Compute density</h3>
+<p>First step is to derive the area of each Planning Subzone under <code>mpsz3414</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>mpsz3414<span class="sc">$</span>Area <span class="ot">&lt;-</span> mpsz3414 <span class="sc">%&gt;%</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_area</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Second step is to compute the density with the <code>mutate</code> function.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>mpsz3414 <span class="ot">&lt;-</span> mpsz3414 <span class="sc">%&gt;%</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">PreSch Density</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">PreSch Count</span><span class="st">`</span> <span class="sc">/</span> Area <span class="sc">*</span> <span class="dv">1000000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="exploratory-data-analysis-eda" class="level1">
+<h1>4. EXPLORATORY DATA ANALYSIS (EDA)</h1>
+<section id="histogram" class="level2">
+<h2 class="anchored" data-anchor-id="histogram">4.1 Histogram</h2>
+<p>For quick assessment or non-publication usage -</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(mpsz3414<span class="sc">$</span><span class="st">`</span><span class="at">PreSch Density</span><span class="st">`</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ho1_1_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>For a more fine-tuned / customised histogram -</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> mpsz3414, </span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">as.numeric</span>(<span class="st">`</span><span class="at">PreSch Density</span><span class="st">`</span>))) <span class="sc">+</span></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">20</span>, </span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">color =</span> <span class="st">"black"</span>, </span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">fill =</span> <span class="st">"salmon"</span>) <span class="sc">+</span></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Are pre-school even distributed in Singapore?"</span>,</span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"There are many planning sub-zones with a single pre-school, on the other hand, </span><span class="sc">\n</span><span class="st">there are two planning sub-zones with at least 20 pre-schools"</span>,</span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Pre-school density (per km sq)"</span>,</span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Frequency"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ho1_1_files/figure-html/unnamed-chunk-27-1.png" class="img-fluid" width="1344"></p>
+</div>
+</div>
+</section>
+<section id="scatterplot" class="level2">
+<h2 class="anchored" data-anchor-id="scatterplot">4.2 Scatterplot</h2>
+<p>Show relationship between <code>Pre-school Density</code> and <code>Pre-school Count</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> mpsz3414, </span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">y =</span> <span class="st">`</span><span class="at">PreSch Count</span><span class="st">`</span>, </span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">x =</span> <span class="fu">as.numeric</span>(<span class="st">`</span><span class="at">PreSch Density</span><span class="st">`</span>))) <span class="sc">+</span></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">"black"</span>, </span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">fill =</span> <span class="st">"salmon"</span>) <span class="sc">+</span></span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlim</span>(<span class="dv">0</span>, <span class="dv">40</span>) <span class="sc">+</span></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">40</span>) <span class="sc">+</span></span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">""</span>,</span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Pre-school density (per km sq)"</span>,</span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Pre-school count"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ho1_1_files/figure-html/unnamed-chunk-28-1.png" class="img-fluid" width="1344"></p>
+</div>
+</div>
 
 
 </section>

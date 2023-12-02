@@ -250,13 +250,13 @@ preschool3414 <- st_transform(preschool,
 ::: {.callout-tip collapse="true" appearance="simple" icon="false"}
 ## [**⇳ Usage of the code chunk below :**]{style="color:#3a9c88"}
 
-[***st_as_sf( )*** - sf -]{style="color:#d46e15"} to convert aspatial object, i.e., `listings` to an sf object.
+[***st_as_sf( )*** - sf -]{style="color:#d46e15"} to convert aspatial object, i.e., *`listings`* to an sf object.
 
 -   *coords* - provide x-coordinates first before y-coordinates.
 
--   *crs* - define the coordinates reference system with 4326.
+-   *crs* - define the coordinates reference system with `EPSG : 4326` ( **`wgs84`** Geographic Coordinate System)
 
--   *%\>%* - to nest *st_transform()* to transform the newly created simple feature data frame into svy21 projected CRS..
+-   *%\>%* - to nest `st_transform( )` to transform the newly created simple feature data frame into `EPSG : 3414` which is Singapore's `SVY21` projected CRS.
 :::
 
 ```{r}
@@ -273,3 +273,169 @@ glimpse(listings_sf, 70)
 A new column, `geometry` is introduced while `longitude` & `latitude` are dropped from the data frame.
 
 <br>
+
+# **3. GEOSPATIAL ANALYSIS**
+
+## 3.1 Buffering
+
+[Buffering](https://www.geographyrealm.com/buffers-in-gis/) is a GIS technique to define an area bidirectional or setback of distance or width from a geographic feature (point, line or polygon).
+
+Below are some of use cases for this GIS technique -
+
+1.  **Ecological Studies**: Determining impact zones around protected wildlife areas to analyse potential effects of human activities on habitats.
+
+2.  **Urban Planning**: Establishing zones around public facilities like schools or hospitals to evaluate accessibility for nearby residents.
+
+3.  **Transportation Engineering**: Assessing areas within a certain radius of public transit lines to optimise service coverage and planning.
+
+4.  **Emergency Preparedness**: Creating zones around industrial plants to simulate the extent of potential chemical spills for evacuation planning.
+
+5.  **Market Analysis**: Defining catchment areas around retail stores to understand the demographic profile of potential customers living within a specific distance.
+
+6.  **Environmental Protection**: Designating buffer zones around rivers or lakes to protect water quality from adjacent land-use activities.
+
+7.  **Risk Assessment**: Evaluating flood risk by creating buffers along waterways that might overflow, affecting adjacent areas.
+
+8.  **Agricultural Management**: Determining pesticide-free zones around crop fields by buffering from schools or residential areas.
+
+9.  **Public Safety**: Analysing crime incidence by creating buffers around areas of interest, such as nightlife districts, to allocate police resources effectively.
+
+10. **Telecommunications**: Planning network infrastructure by buffering around existing cell towers to identify areas with weak signal coverage for improvement.
+
+### 3.1.1 Create buffer distance
+
+::: {.callout-tip collapse="true" appearance="simple" icon="false"}
+## [**⇳ Usage of the code chunk below :**]{style="color:#3a9c88"}
+
+[***st_buffer( )*** - sf -]{style="color:#d46e15"} to set geometric unary operation.
+
+-   dist - to set 5 metre buffer distance for *`cyclingpath`*.
+
+-   nQuadSegs - to set number of segments per quadrant.
+:::
+
+```{r}
+buffer_cycling <- st_buffer(cyclingPath, 
+                            dist = 5, 
+                            nQuadSegs = 30)
+```
+
+### 3.1.2 Calculate buffer / area
+
+::: {.callout-tip collapse="true" appearance="simple" icon="false"}
+## [**⇳ Usage of the code chunk below :**]{style="color:#3a9c88"}
+
+[***st_area( )*** - sf -]{style="color:#d46e15"} to compute the buffered area in *`buffer_cycling`* . The area is introduced under a new attribute `area`.
+
+note - if st_area on *`cyclingPath`* will have 0 m^2^ for area.
+:::
+
+```{r}
+buffer_cycling$area <- st_area(buffer_cycling)
+```
+
+```{r}
+sum(buffer_cycling$area)
+```
+
+## 3.2 Point-in-Polygon (PIP) Count
+
+This GIS technique is used to determine how many point features (such as locations of schools, hospitals, or crime incidents) fall within polygon features (like municipal boundaries, neighborhoods, or zones).
+
+This technique is very useful for understanding the distribution and concentration of features across a geographic area and can inform policy decisions, resource allocation, or identify trends and patterns in spatial data.
+
+### 3.2.1 Intersection & calculate 
+
+::: {.callout-tip collapse="true" appearance="simple" icon="false"}
+## [**⇳ Usage of the code chunk below :**]{style="color:#3a9c88"}
+
+[***st_intersects( )*** - sf -]{style="color:#d46e15"} to identify pre-schools located inside each Planning Subzone.
+
+[***length( )*** - base -]{style="color:#d46e15"} to aggregate and count the intersection points within each Planning Subzone.
+:::
+
+```{r}
+mpsz3414$`PreSch Count`<- lengths(st_intersects(mpsz3414, preschool3414))
+```
+
+```{r}
+summary(mpsz3414$`PreSch Count`)
+```
+
+### 3.2.2 Sort listing
+
+::: {.callout-tip collapse="true" appearance="simple" icon="false"}
+## [**⇳ Usage of the code chunk below :**]{style="color:#3a9c88"}
+
+[***top_n( x , n, wt)*** - dplyr -]{style="color:#d46e15"} to list the Planning Subzone with the most pre-schools.
+
+-   x - a data frame, in this case, *`mpsz3414`*
+
+-   n - number of rows returned.
+
+-   wt - the variable for the sorting. If not specified, the last column will be used by default.
+:::
+
+```{r}
+top_n(mpsz3414, 3, `PreSch Count`)
+```
+
+### 3.2.3 Compute density
+
+First step is to derive the area of each Planning Subzone under `mpsz3414`.
+
+```{r}
+mpsz3414$Area <- mpsz3414 %>%
+  st_area()
+```
+
+Second step is to compute the density with the `mutate` function.
+
+```{r}
+mpsz3414 <- mpsz3414 %>%
+  mutate(`PreSch Density` = `PreSch Count` / Area * 1000000)
+```
+
+# 4. EXPLORATORY DATA ANALYSIS (EDA)
+
+## 4.1 Histogram
+
+For quick assessment or non-publication usage -
+
+```{r}
+hist(mpsz3414$`PreSch Density`)
+```
+
+For a more fine-tuned / customised histogram -
+
+```{r}
+#| fig-width: 14
+ggplot(data = mpsz3414, 
+       aes(x = as.numeric(`PreSch Density`))) +
+  geom_histogram(bins = 20, 
+                 color = "black", 
+                 fill = "salmon") +
+  labs(title = "Are pre-school even distributed in Singapore?",
+       subtitle = "There are many planning sub-zones with a single pre-school, on the other hand, \nthere are two planning sub-zones with at least 20 pre-schools",
+       x = "Pre-school density (per km sq)",
+       y = "Frequency")
+```
+
+## 4.2 Scatterplot
+
+Show relationship between `Pre-school Density` and `Pre-school Count`.
+
+```{r}
+#| fig-width: 14
+#| fig-height: 10
+ggplot(data = mpsz3414, 
+       aes(y = `PreSch Count`, 
+           x = as.numeric(`PreSch Density`))) +
+  geom_point(color = "black", 
+             fill = "salmon") +
+  xlim(0, 40) +
+  ylim(0, 40) +
+  labs(title = "",
+       x = "Pre-school density (per km sq)",
+       y = "Pre-school count")
+```
