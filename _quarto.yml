@@ -3,7 +3,7 @@ project:
 
 website:
   google-analytics: "G-SGM5SNE7BQ"
-  title: "Geospatial_analytics"
+  title: "Geospatial Analytics"
   navbar:
     left: 
       - text: Hands-On

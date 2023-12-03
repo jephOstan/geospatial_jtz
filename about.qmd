@@ -1,9 +1,175 @@
 ---
-title: "About"
+title: "Profile"
 ---
 
-About this site
+[Name]{style="color:#a39f9d"} : [**Joseph Zexeong Tan**](www.linkedin.com/in/joseph-zexeong-tan "LinkedIn Profile")
 
-```{r}
-1 + 1
-```
+[Residency]{style="color:#a39f9d"} : Singapore Permanent Resident
+
+[Language Proficiency]{style="color:#a39f9d"} : English, Mandarin, Malay, Dialect-Cantonese, Dialect-Hokkien, French (elementary).
+
+[Interests]{style="color:#a39f9d"} : Volunteering to clean up Pulau Ubin, endurance-multi-sports (swim, cycle, run) workout.
+
+[Awards]{style="color:#a39f9d"} : 2^nd^ runner up in both Sudoku tournaments (2007, 2008) when pursuing my undergrad degree at UMS.
+
+## WORKING EXPERIENCES
+
+### [Software Solutions Consultancy]{style="color:#d69c3c"}
+
+-   project management, quality assurance, UI/UX design, digital marketing, account supports, business development, end-user trainer
+
+### [Environmental Consultancy]{style="color:#d69c3c"}
+
+-   environmental impact assessment (EIA) consultant
+
+### [Wall & Glass Decal & Retail]{style="color:#d69c3c"}
+
+-   operational management, designer, installer
+
+### [Food & Beverages]{style="color:#d69c3c"}
+
+-   operational management, business co-owner
+
+<br>
+
+# **EDUCATION**
+
+::: {.callout-tip collapse="true" appearance="simple" icon="false"}
+## Master of IT in Business, major in Analytics 
+
+[Institute]{style="color:#a39f9d"} : **Singapore Management University ( SMU )**
+
+[Period ]{style="color:#a39f9d"}: August 2022 to November 2023
+
+::: {.callout-tip collapse="true" appearance="simple" icon="false"}
+## Some of the modules I have undertaken ⇳
+
+-   ::: {.callout-tip collapse="true" appearance="simple" icon="false"}
+    ## **Applied Geospatial Analytics** 
+
+    [Project]{style="color:#a39f9d"} : **Regionalisation to uncover insights into water points across 774 districts in Nigeria**.
+
+    [Project Details]{style="color:#a39f9d"} : *Performed spatially & non-spatially constrained cluster analysis for functional & non-functional water points by various attributes, used R/Posit.*
+    :::
+
+-   ::: {.callout-tip collapse="true" appearance="simple" icon="false"}
+    ## **Applied Healthcare Analytics** 
+
+    [Project]{style="color:#a39f9d"} : **Comparison** **5 machine learning (ML) models to predict hospitalisation, ED and** **ICU admission**.
+
+    [Project Details]{style="color:#a39f9d"} : *Explored Logistic Regression(LR), Random Forest, Gradient Boosting, Multilayer Perceptron & eXtreme Gradient Boosting (XGB) & evaluated these models\' outcomes based on precision, recall, sensitivity & AUPRC score, used Python.*
+    :::
+
+-   ::: {.callout-tip collapse="true" appearance="simple" icon="false"}
+    ## **Big Data Tools & Technology**
+
+    [Project]{style="color:#a39f9d"} : **Designing a scalable big data solution for a sports company with 10 stores in Southeast Asia & 100+ retail venues worldwide**.
+
+    [Project Details]{style="color:#a39f9d"} : *Proposed a solution based on Hadoop ecosystem to address different data sources & data types, the volume & velocity aspect of data ingestion, and the veracity aspects of the processing
+    requirement.*
+    :::
+
+-   ::: {.callout-tip collapse="true" appearance="simple" icon="false"}
+    ## **Customers Analytics & Application** 
+
+    [Project]{style="color:#a39f9d"} : **Identify bottlenecks and revenue options for a kitchenware manufacturer (not fictitious)**.
+
+    [Project Details]{style="color:#a39f9d"} : *Performed customer segmentation (RFM & K-means clustering), geospatial distribution & market-basket analysis to improve sales opportunities via product pairings & optimise internal resources distribution across Peninsular Malaysia, with Python and R/Posit.*
+    :::
+
+-   ::: {.callout-tip collapse="true" appearance="simple" icon="false"}
+    ## **Cybersecurity Technology & Application** 
+
+    [Topics covered : ]{style="color:#a39f9d"}symmetric & asymmetric encryption, HMAC, network, software and web security, K-Anonymity
+
+    [Project]{style="color:#a39f9d"} : **Using Large Language Model (LLM) to manage software vulnerability**.
+
+    [Project Details]{style="color:#a39f9d"} : *Explored how LLM can be used to detect the vulnerability and the trade-off in using it for code recovery.*
+    :::
+
+-   ::: {.callout-tip collapse="true" appearance="simple" icon="false"}
+    ## Data Analytics Lab 
+
+    [Project]{style="color:#a39f9d"} : **Comparison 4 ML algorithms to predict a user\'s creditworthiness for a financial loan**.
+
+    [Project Details]{style="color:#a39f9d"} : *Explored the prediction by LR, boosted trees, bootstrap forest & XGB based on first-timer loaners & recurrent loaners datasets, used JMP Pro.*
+
+    [Project]{style="color:#a39f9d"} : **Discover Singapore land usage captured by Sentinal-2 L2A satellite images via unsupervised ML techniques**.
+
+    [Project Details]{style="color:#a39f9d"} : *Used K-means & normal mixture clustering to extract and compare the land usage for different bandwidths of satellite images, used JMP Pro.*
+    :::
+
+-   ::: {.callout-tip collapse="true" appearance="simple" icon="false"}
+    ## **Data Management** 
+
+    [Project]{style="color:#a39f9d"} : **Designing an entity relationship (ER) model & query optimisation for big data**.
+
+    [Project Details]{style="color:#a39f9d"} : *Designed ER model for a volunteers\' management system
+    and explored a Composite Index & Partition approach to optimise queries, with MySQL.*
+    :::
+
+-   **Data Science for Business -** *Python programming for data analysis.*
+
+-   **Query Processing & Optimisation -** *Explored Composite Index and Partition approach to optimise a query.*
+
+-   **Excel Modelling for Decision Making -** *Modelled Singapore Food Consumption Patterns & CO2 Emissions by 2030.*
+
+-   ::: {.callout-tip collapse="true" appearance="simple" icon="false"}
+    ## **Sustainable Finance** 
+
+    [Topics covered : ]{style="color:#a39f9d"}ESG, Inclusive Finance, Sustainable Debt, Sustainable Risks, Impact Investment, Sustainable Reporting
+
+    [Project]{style="color:#a39f9d"} : **Proposing a sustainable infrastructure fund that creates social or environmental impact or value(fictitious)**.
+
+    [Project Details]{style="color:#a39f9d"} : *Proposed a country-adapted private fund that specifically target District Cooling solution for Brunei, with fund management fee, carried interests upon successful exit, locked down period, identified risks and target investors.*
+    :::
+
+-   **Sustainable Impact**
+
+-   **Visual Analytics & Applications** - ***R/Posit, [Tableau](https://public.tableau.com/app/profile/joseph.zexeong.tan/vizzes "Tableau portfolio"), Shiny, GitHub, [Quarto portfolio](https://visual-analytics-jeph0stan.netlify.app/ "Data visualisation portfolio").***
+:::
+:::
+
+::: {.callout-tip collapse="true" appearance="simple" icon="false"}
+## Bachelor of Science with Honours, major in Environmental Science
+
+[Institute]{style="color:#a39f9d"} : **University Malaysia Sabah ( UMS )**
+
+[Period ]{style="color:#a39f9d"}: July 2006 to October 2009
+
+::: {.callout-tip collapse="true" appearance="simple" icon="false"}
+## Some of the modules I have undertaken ⇳
+
+-   **Physics & Environmental Remote Sensing**
+
+-   **Geographical Information System & Environmental Modelling**
+
+-   **Environmental Statistics**
+
+-   **Environmental Monitoring & Assessment**
+
+-   **Soil Science**
+
+-   **Ecology & Microbiology**
+
+-   **Environmental Chemistry & Chemodynamics**
+
+-   **Air Quality Analysis and Noise**
+
+-   **Hydrology & Water Quality Analysis**
+
+-   **Pollution Control Technology**
+
+-   **Environmental Health & Toxicology**
+
+-   **Solid & Toxic Waste Management**
+
+-   **Natural Resources & Environmental Management**
+
+-   **Macro and Micro Economy**
+
+-   **Principles of Entrepreneurship**
+
+-   **French**
+:::
+:::
