@@ -1,5 +1,5 @@
 ---
-title: "GEOSPATIAL ANALYTICS"
+title: "GEOSPATIAL ANALYTICS with R"
 subtitle: with R Markdown, R Studio and Quarto
 website: 
     google-analytics: "G-SGM5SNE7BQ"

@@ -9,7 +9,9 @@ website:
       - text: Hands-On
         menu:
           - text: Data Wrangling Technique
-            href: ho/ho1_1.qmd 
+            href: ho/ho1_1.qmd
+          - text: Choropleth Mapping
+            href: ho/ho1_2.qmd 
             
     right:
       - href: index.qmd

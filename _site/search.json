@@ -2,16 +2,9 @@
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "GEOSPATIAL ANALYTICS",
+    "title": "GEOSPATIAL ANALYTICS with R",
     "section": "",
     "text": "Content Disclaimer\n\n\n\n\n\nThis micro-site is intended as a personal portfolio and for sharing a learning journey only.\nOther than common facts or quotes from other parties, any views, opinions, or comments herein represented in this site are personal and belong solely to the site owner and do not represent those people, institutions or organisations that the owner may or may not be associated with professionally or within a personal capacity unless explicitly stated.\nThis site’s owner makes no representation of the accuracy or completeness of any display information or any link on this site. The owner will not be liable for any errors, omissions or availability of any information. The owner will not be liable for any of your losses, injuries, or damages from using the content within this site."
-  },
-  {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "Profile",
-    "section": "",
-    "text": "Name : Joseph Zexeong Tan\nResidency : Singapore Permanent Resident\nLanguage Proficiency : English, Mandarin, Malay, Dialect-Cantonese, Dialect-Hokkien, French (elementary).\nInterests : Volunteering to clean up Pulau Ubin, endurance-multi-sports (swim, cycle, run) workout.\nAwards : 2nd runner up in both Sudoku tournaments (2007, 2008) when pursuing my undergrad degree at UMS."
   },
   {
     "objectID": "ho/ho1_1.html",
@@ -46,7 +39,7 @@
     "href": "ho/ho1_1.html#data-visualisation",
     "title": "Data Wrangling with R",
     "section": "1.4 Data Visualisation",
-    "text": "1.4 Data Visualisation\n\n1.4.1 Retrieve Information\n\n\n\n\n\n\n⇳ Usage of the code chunk below :\n\n\n\n\n\nplot( ) - ?? - to visualise geospatial features.\n\n\n\n\nplot(mpsz)\n\n\n\n\nPlot only the boundaries - combine both plot( ) together with st_geometry( ) to specifically get the geometry details for plot( ) to plot.\n\nplot(st_geometry(mpsz))\n\n\n\n\nor, specifically indicate which attribute / variable to plot.\n\nplot(mpsz[\"PLN_AREA_N\"])"
+    "text": "1.4 Data Visualisation\n\n1.4.1 Retrieve Information\n\n\n\n\n\n\n⇳ Usage of the code chunk below :\n\n\n\n\n\nplot( ) - graphics - to visualise geospatial features.\n\n\n\n\nplot(mpsz)\n\n\n\n\nPlot only the boundaries - combine both plot( ) together with st_geometry( ) to specifically get the geometry details for plot( ) to plot.\n\nplot(st_geometry(mpsz))\n\n\n\n\nor, specifically indicate which attribute / variable to plot.\n\nplot(mpsz[\"PLN_AREA_N\"])"
   },
   {
     "objectID": "ho/ho1_1.html#projection-transformation",
@@ -91,6 +84,13 @@
     "text": "4.2 Scatterplot\nShow relationship between Pre-school Density and Pre-school Count.\n\nggplot(data = mpsz3414, \n       aes(y = `PreSch Count`, \n           x = as.numeric(`PreSch Density`))) +\n  geom_point(color = \"black\", \n             fill = \"salmon\") +\n  xlim(0, 40) +\n  ylim(0, 40) +\n  labs(title = \"SPATIAL DISTRIBUTION OF SINGAPORE PRE-SCHOOL FACILITIES\",\n       subtitle = \"Correlation Between Pre-School Count and Density per Square Kilometer Across Subzones\",\n       x = \"Pre-school density (per km sq)\",\n       y = \"Pre-school count\") +\n  theme(plot.title = element_text (size = 14, \n                                   colour = \"#302f2f\",\n                                   face = \"bold\"),\n        plot.subtitle = element_text(size = 11,\n                                     colour = \"#424242\",\n                                     face = \"italic\"))"
   },
   {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "Profile",
+    "section": "",
+    "text": "Name : Joseph Zexeong Tan\nResidency : Singapore Permanent Resident\nLanguage Proficiency : English, Mandarin, Malay, Dialect-Cantonese, Dialect-Hokkien, French (elementary).\nInterests : Volunteering to clean up Pulau Ubin, endurance-multi-sports (swim, cycle, run) workout.\nAwards : 2nd runner up in both Sudoku tournaments (2007, 2008) when pursuing my undergrad degree at UMS."
+  },
+  {
     "objectID": "about.html#working-experiences",
     "href": "about.html#working-experiences",
     "title": "Profile",
@@ -98,10 +98,52 @@
     "text": "WORKING EXPERIENCES\n\nSoftware Solutions Consultancy\n\nproject management, quality assurance, UI/UX design, digital marketing, account supports, business development, end-user trainer\n\n\n\nEnvironmental Consultancy\n\nenvironmental impact assessment (EIA) consultant\n\n\n\nWall & Glass Decal & Retail\n\noperational management, designer, installer\n\n\n\nFood & Beverages\n\noperational management, business co-owner"
   },
   {
-    "objectID": "about.html#bachelor-of-science-with-honours-major-in-environmental-science",
-    "href": "about.html#bachelor-of-science-with-honours-major-in-environmental-science",
-    "title": "Profile",
-    "section": "Bachelor of Science with Honours, major in Environmental Science",
-    "text": "Bachelor of Science with Honours, major in Environmental Science\nInstitute : University Malaysia Sabah ( UMS )\nPeriod: July 2006 to October 2009\n\n\n\n\n\n\nSome of the modules I have undertaken ⇳\n\n\n\n\n\n\nPhysics & Environmental Remote Sensing\nGeographical Information System & Environmental Modelling\nEnvironmental Statistics\nEnvironmental Monitoring & Assessment\nSoil Science\nEcology & Microbiology\nEnvironmental Chemistry & Chemodynamics\nAir Quality Analysis and Noise\nHydrology & Water Quality Analysis\nPollution Control Technology\nEnvironmental Health & Toxicology\nSolid & Toxic Waste Management\nNatural Resources & Environmental Management\nMacro and Micro Economy\nPrinciples of Entrepreneurship\nFrench"
+    "objectID": "ho/ho1_2.html",
+    "href": "ho/ho1_2.html",
+    "title": "Choropleth Mapping",
+    "section": "",
+    "text": "This post explores the functions in R to plot choropleth maps."
+  },
+  {
+    "objectID": "ho/ho1_2.html#loading-r-packages",
+    "href": "ho/ho1_2.html#loading-r-packages",
+    "title": "Choropleth Mapping",
+    "section": "1.1 Loading R Packages",
+    "text": "1.1 Loading R Packages\nThe following are the packages required for the hands-on exercise :\n\n\n\n\n\n\n⇳ Usage of the code chunk below :\n\n\n\n\n\np_load( ) - pacman - to load packages into R environment. This function will attempt to install the package from CRAN or the pacman repository list if it is not installed.\n\n\n\n\npacman::p_load(sf, tmap, tidyverse)"
+  },
+  {
+    "objectID": "ho/ho1_2.html#data-importation",
+    "href": "ho/ho1_2.html#data-importation",
+    "title": "Choropleth Mapping",
+    "section": "1.2 Data Importation",
+    "text": "1.2 Data Importation\n\n1.2.1 Import Geospatial Data\nImport Singapore Urban Redevelopment Authority(URA) Master Plan 2014 Subzone Boundary from data.gov.sg into mpsz simple feature data frame -\n\n\n\n\n\n\n⇳ Usage of the code chunk below :\n\n\n\n\n\nst_read( ) - sf- to read the shapefile into simple features data frame format with 2 arguments below :\n\ndsn - define data path.\nlayer - provide shapefile name.\n\n\n\n\n\nmpsz = st_read(dsn = \"data/geospatial\",                \n               layer = \"MP14_SUBZONE_WEB_PL\")\n\nReading layer `MP14_SUBZONE_WEB_PL' from data source \n  `D:\\jephOstan\\geospatial_jtz\\ho\\data\\geospatial' using driver `ESRI Shapefile'\nSimple feature collection with 323 features and 15 fields\nGeometry type: MULTIPOLYGON\nDimension:     XY\nBounding box:  xmin: 2667.538 ymin: 15748.72 xmax: 56396.44 ymax: 50256.33\nProjected CRS: SVY21\n\n\n\n\n1.2.2 Import Aspatial Data\nImport Singapore Urban Redevelopment Authority(URA) Master Plan 2014 Subzone Boundary from data.gov.sg into mpsz simple feature data frame -\n\n\n\n\n\n\n⇳ Usage of the code chunk below :\n\n\n\n\n\nread_csv( ) - readr - to read a CSV file.\n\n\n\n\npopdata &lt;- read_csv(\"data/aspatial/respopagesextod2011to2020.csv\")"
+  },
+  {
+    "objectID": "ho/ho1_2.html#data-inspection",
+    "href": "ho/ho1_2.html#data-inspection",
+    "title": "Choropleth Mapping",
+    "section": "1.3 Data Inspection",
+    "text": "1.3 Data Inspection\n\n1.3.1 Retrieve Information\n\nglimpse(popdata,60)\n\nRows: 984,656\nColumns: 7\n$ PA   &lt;chr&gt; \"Ang Mo Kio\", \"Ang Mo Kio\", \"Ang Mo Kio\", \"An…\n$ SZ   &lt;chr&gt; \"Ang Mo Kio Town Centre\", \"Ang Mo Kio Town Ce…\n$ AG   &lt;chr&gt; \"0_to_4\", \"0_to_4\", \"0_to_4\", \"0_to_4\", \"0_to…\n$ Sex  &lt;chr&gt; \"Males\", \"Males\", \"Males\", \"Males\", \"Males\", …\n$ TOD  &lt;chr&gt; \"HDB 1- and 2-Room Flats\", \"HDB 3-Room Flats\"…\n$ Pop  &lt;dbl&gt; 0, 10, 30, 50, 0, 0, 40, 0, 0, 10, 30, 60, 0,…\n$ Time &lt;dbl&gt; 2011, 2011, 2011, 2011, 2011, 2011, 2011, 201…"
+  },
+  {
+    "objectID": "ho/ho1_2.html#data-wrangling",
+    "href": "ho/ho1_2.html#data-wrangling",
+    "title": "Choropleth Mapping",
+    "section": "2.1 Data Wrangling",
+    "text": "2.1 Data Wrangling\nFollowing are the additional variables will be needed for later choropleth plotting -\n\nYOUNG : age group 0 to 4 until age group 20 to 24.\nECONOMY ACTIVE : age group 25 - 29 until age group 60 - 64.\nAGED : age group 65 and above.\nTOTAL : all age groups.\nDEPENDENCY : the ratio between young & aged against the economy active group.\n\n\n\n\n\n\n\n⇳ Usage of the code chunk below :\n\n\n\n\n\npivot_wider( ) - tidyr - to create new columns with column name based on AG & values based on pop.\nmutate( ) - dplyr - to create new columns as mentioned above.\nfilter( ) - dplyr - to keep only 2020 for Time attribute.\ngroup_ by( ) - dplyr - to group 3 variables - PA, SZ and AG.\nselect( ) - dplyr - to keep only variables that mentioned.\n\n\n\n\npopdata2020 &lt;- popdata %&gt;%\n  filter(Time == 2020) %&gt;%\n  group_by(PA, SZ, AG) %&gt;%\n  summarise(`POP` = sum(`Pop`)) %&gt;%\n  ungroup() %&gt;%\n  pivot_wider(names_from = AG, values_from = POP) %&gt;%\n  mutate(YOUNG = rowSums(.[3:6]) + rowSums(.[12])) %&gt;%\n  mutate(`ECONOMY ACTIVE` = rowSums(.[7:11]) + rowSums(.[13:15])) %&gt;% \n  mutate(`AGED` = rowSums(.[16:21])) %&gt;%\n  mutate(`TOTAL` = rowSums(.[3:21])) %&gt;%\n  mutate(`DEPENDENCY` = (`YOUNG` + `AGED`)/`ECONOMY ACTIVE`) %&gt;%\n  select(`PA`,`SZ`,`YOUNG`,`ECONOMY ACTIVE`,`AGED`,`TOTAL`,`DEPENDENCY`)"
+  },
+  {
+    "objectID": "ho/ho1_2.html#merging-geospatial-aspatial-data",
+    "href": "ho/ho1_2.html#merging-geospatial-aspatial-data",
+    "title": "Choropleth Mapping",
+    "section": "2.2 Merging Geospatial & Aspatial Data",
+    "text": "2.2 Merging Geospatial & Aspatial Data\n\n\n\n\n\n\n⇳ Usage of the code chunk below :\n\n\n\n\n\nmutate_at( ) - dplyr - to modify specified columns PA and SZ in popdata2020.\n\n.fun argument to indicates the function, i.e. touper( ) applying on the specified columns. This function is to convert all text to uppercase in order to match the uppercase in the geospatial dataset.\n\nleft_join( ) - dplyr - to keep all observations in mpsz. This is an outer joins.\nwrite_rds( ) - readr - to serialise mpsz_pop2020. By default, no compression as space is cheaper than time.\n\n\n\n\npopdata2020 &lt;- popdata2020 %&gt;%\n  mutate_at(.vars = vars(PA, SZ),\n            .funs = list(toupper)) %&gt;%\n  filter(`ECONOMY ACTIVE` &gt; 0)\n\n\nmpsz_pop2020 &lt;- left_join(mpsz, popdata2020,\n                          by = c(\"SUBZONE_N\" = \"SZ\"))\n\n\nwrite_rds(mpsz_pop2020, \"data/mpszpop2020.rds\")"
+  },
+  {
+    "objectID": "ho/ho1_2.html#mapping-with-tmap",
+    "href": "ho/ho1_2.html#mapping-with-tmap",
+    "title": "Choropleth Mapping",
+    "section": "3.1 Mapping with tmap",
+    "text": "3.1 Mapping with tmap\n\n3.1.1 Plot with qtm( )\n\ntmap_mode(\"plot\")\nqtm(mpsz_pop2020,\n    fill = \"DEPENDENCY\")"
   }
 ]

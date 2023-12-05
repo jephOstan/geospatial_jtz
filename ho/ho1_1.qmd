@@ -175,7 +175,7 @@ From the output above, latitude and longitude are in decimal degree format, whic
 ::: {.callout-tip collapse="true" appearance="simple" icon="false"}
 ## [**⇳ Usage of the code chunk below :**]{style="color:#3a9c88"}
 
-[***plot( )*** - ?? -]{style="color:#d46e15"} to visualise geospatial features.
+[***plot( )*** - graphics -]{style="color:#d46e15"} to visualise geospatial features.
 :::
 
 ```{r}
@@ -346,7 +346,7 @@ This GIS technique is used to determine how many point features (such as locatio
 
 This technique is very useful for understanding the distribution and concentration of features across a geographic area and can inform policy decisions, resource allocation, or identify trends and patterns in spatial data.
 
-### 3.2.1 Intersection & calculate 
+### 3.2.1 Intersection & calculate
 
 ::: {.callout-tip collapse="true" appearance="simple" icon="false"}
 ## [**⇳ Usage of the code chunk below :**]{style="color:#3a9c88"}

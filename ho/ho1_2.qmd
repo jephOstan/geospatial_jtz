@@ -1,0 +1,177 @@
+---
+title: "Choropleth Mapping"
+subtitle: "Geospatial Data"
+editor: visual
+date: 4 Dec 2023
+date-modified: "`r Sys.Date()`"
+code-copy: true
+execute: 
+  echo: true
+  eval: true
+  warning: false
+  error: false
+website: 
+    google-analytics: "G-SGM5SNE7BQ"
+format:
+  html:
+    code-overflow: wrap
+    code-fold: false
+    code-summary: "Show the code"
+    css: styles.css
+---
+
+This post explores the functions in R to plot choropleth maps.
+
+<br>
+
+# **1. INITIAL**
+
+## **1.1 Loading R Packages**
+
+The following are the packages required for the hands-on exercise :
+
+::: {.callout-tip collapse="true" appearance="simple" icon="false"}
+## [**⇳ Usage of the code chunk below :**]{style="color:#3a9c88"}
+
+[***p_load( )*** - pacman -]{style="color:#d46e15"} to load packages into R environment. This function will attempt to install the package from CRAN or the pacman repository list if it is not installed.
+:::
+
+```{r}
+pacman::p_load(sf, tmap, tidyverse)
+```
+
+<br>
+
+## **1.2 Data Importation**
+
+### 1.2.1 Import Geospatial Data
+
+Import **Singapore [Urban Redevelopment Authority](https://www.ura.gov.sg/Corporate/Media-Room/Media-Releases/pr14-33)(URA) Master Plan 2014 Subzone Boundary** from [data.gov.sg](#0) into **`mpsz`** simple feature data frame -
+
+::: {.callout-tip collapse="true" appearance="simple" icon="false"}
+## [**⇳ Usage of the code chunk below :**]{style="color:#3a9c88"}
+
+[***st_read( )*** - sf-]{style="color:#d46e15"} to read the shapefile into simple features data frame format with 2 arguments below :
+
+-   **dsn** - define data path.
+
+-   **layer** - provide shapefile name.
+:::
+
+```{r}
+mpsz = st_read(dsn = "data/geospatial",                
+               layer = "MP14_SUBZONE_WEB_PL")
+```
+
+### 1.2.2 Import Aspatial Data
+
+Import **Singapore [Urban Redevelopment Authority](https://www.ura.gov.sg/Corporate/Media-Room/Media-Releases/pr14-33)(URA) Master Plan 2014 Subzone Boundary** from [data.gov.sg](#0) into **`mpsz`** simple feature data frame -
+
+::: {.callout-tip collapse="true" appearance="simple" icon="false"}
+## [**⇳ Usage of the code chunk below :**]{style="color:#3a9c88"}
+
+[***read_csv( )*** - readr -]{style="color:#d46e15"} to read a CSV file.
+:::
+
+```{r}
+popdata <- read_csv("data/aspatial/respopagesextod2011to2020.csv")
+```
+
+## **1.3 Data Inspection**
+
+### 1.3.1 Retrieve Information
+
+```{r}
+glimpse(popdata,60)
+```
+
+<br>
+
+# **2. DATA PROCESSING**
+
+## **2.1 Data Wrangling**
+
+Following are the additional variables will be needed for later choropleth plotting -
+
+-   YOUNG : age group 0 to 4 until age group 20 to 24.
+
+-   ECONOMY ACTIVE : age group 25 - 29 until age group 60 - 64.
+
+-   AGED : age group 65 and above.
+
+-   TOTAL : all age groups.
+
+-   DEPENDENCY : the ratio between young & aged against the economy active group.
+
+::: {.callout-tip collapse="true" appearance="simple" icon="false"}
+## [**⇳ Usage of the code chunk below :**]{style="color:#3a9c88"}
+
+[[***pivot_wider( )***](https://tidyr.tidyverse.org/reference/pivot_wider.html) - tidyr -]{style="color:#d46e15"} to create new columns with column name based on `AG` & values based on `pop`.
+
+[***mutate( )*** - dplyr -]{style="color:#d46e15"} to create new columns as mentioned above.
+
+[***filter( )*** - dplyr -]{style="color:#d46e15"} to keep only `2020` for `Time` attribute.
+
+[***group\_ by( )*** - dplyr -]{style="color:#d46e15"} to group 3 variables - PA, SZ and AG.
+
+[***select( )*** - dplyr -]{style="color:#d46e15"} to keep only variables that mentioned.
+:::
+
+```{r}
+popdata2020 <- popdata %>%
+  filter(Time == 2020) %>%
+  group_by(PA, SZ, AG) %>%
+  summarise(`POP` = sum(`Pop`)) %>%
+  ungroup() %>%
+  pivot_wider(names_from = AG, values_from = POP) %>%
+  mutate(YOUNG = rowSums(.[3:6]) + rowSums(.[12])) %>%
+  mutate(`ECONOMY ACTIVE` = rowSums(.[7:11]) + rowSums(.[13:15])) %>% 
+  mutate(`AGED` = rowSums(.[16:21])) %>%
+  mutate(`TOTAL` = rowSums(.[3:21])) %>%
+  mutate(`DEPENDENCY` = (`YOUNG` + `AGED`)/`ECONOMY ACTIVE`) %>%
+  select(`PA`,`SZ`,`YOUNG`,`ECONOMY ACTIVE`,`AGED`,`TOTAL`,`DEPENDENCY`)
+```
+
+## 2.2 Merging Geospatial & Aspatial Data
+
+::: {.callout-tip collapse="true" appearance="simple" icon="false"}
+## [**⇳ Usage of the code chunk below :**]{style="color:#3a9c88"}
+
+[[***mutate_at( )***](https://dplyr.tidyverse.org/reference/mutate_all.html?q=mutate_at#grouping-variables) - dplyr -]{style="color:#d46e15"} to modify specified columns `PA` and `SZ` in *`popdata2020`*.
+
+-   `.fun` argument to indicates the function, i.e. `touper( )` applying on the specified columns. This function is to convert all text to uppercase in order to match the uppercase in the geospatial dataset.
+
+[[***left_join( )***](https://dplyr.tidyverse.org/reference/mutate-joins.html) - dplyr -]{style="color:#d46e15"} to keep all observations in `mpsz`. This is an `outer joins`.
+
+[***write_rds( )*** - readr -]{style="color:#d46e15"} to serialise `mpsz_pop2020`. By default, no compression as space is cheaper than time.
+:::
+
+```{r}
+popdata2020 <- popdata2020 %>%
+  mutate_at(.vars = vars(PA, SZ),
+            .funs = list(toupper)) %>%
+  filter(`ECONOMY ACTIVE` > 0)
+```
+
+```{r}
+mpsz_pop2020 <- left_join(mpsz, popdata2020,
+                          by = c("SUBZONE_N" = "SZ"))
+```
+
+```{r}
+write_rds(mpsz_pop2020, "data/mpszpop2020.rds")
+```
+
+# 3. CHOROPLETH MAPPING
+
+## 3.1 Mapping with tmap
+
+### 3.1.1 Plot with `qtm( )`
+
+```{r}
+#| fig-width: 10
+#| fig-asp: 0.68
+tmap_mode("plot")
+qtm(mpsz_pop2020,
+    fill = "DEPENDENCY")
+```
