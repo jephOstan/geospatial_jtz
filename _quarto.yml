@@ -14,9 +14,10 @@ website:
             href: ho/ho1_2.qmd 
             
     right:
-      - href: index.qmd
-        text: Home
-      - about.qmd
+    - text: Home
+      href: index.qmd
+    - text: Profile
+      href: about.qmd
 
 format:
   html:
