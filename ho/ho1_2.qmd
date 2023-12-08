@@ -77,6 +77,8 @@ Import **Singapore [Urban Redevelopment Authority](https://www.ura.gov.sg/Corpor
 popdata <- read_csv("data/aspatial/respopagesextod2011to2020.csv")
 ```
 
+<br>
+
 ## **1.3 Data Inspection**
 
 ### 1.3.1 Retrieve Information
@@ -132,6 +134,8 @@ popdata2020 <- popdata %>%
   select(`PA`,`SZ`,`YOUNG`,`ECONOMY ACTIVE`,`AGED`,`TOTAL`,`DEPENDENCY`)
 ```
 
+<br>
+
 ## 2.2 Merging Geospatial & Aspatial Data
 
 ::: {.callout-tip collapse="true" appearance="simple" icon="false"}
@@ -162,16 +166,657 @@ mpsz_pop2020 <- left_join(mpsz, popdata2020,
 write_rds(mpsz_pop2020, "data/mpszpop2020.rds")
 ```
 
+<br>
+
 # 3. CHOROPLETH MAPPING
 
 ## 3.1 Mapping with tmap
 
 ### 3.1.1 Plot with `qtm( )`
 
+::: {.callout-tip collapse="true" appearance="simple" icon="false"}
+## [**⇳ Usage of the code chunk below :**]{style="color:#3a9c88"}
+
+[[***qtm( )***](https://www.rdocumentation.org/packages/tmap/versions/3.3-4/topics/qtm) - tmap -]{style="color:#d46e15"} to plot a thematic map quickly. However, the aesthetic layers are
+
+-   fill - to specify which variable to be used for the choropleth. Set it `NULL` if just to draw the polygon borders.
+:::
+
 ```{r}
-#| fig-width: 10
+#| fig-width: 8
 #| fig-asp: 0.68
-tmap_mode("plot")
 qtm(mpsz_pop2020,
     fill = "DEPENDENCY")
 ```
+
+```{r}
+#| fig-width: 8
+#| fig-asp: 0.68
+qtm(mpsz_pop2020,
+    fill = NULL)
+```
+
+### 3.1.1 Plot Cartographic Furniture with `tmap` elements
+
+::: {.callout-tip collapse="true" appearance="simple" icon="false"}
+## [**⇳ Usage of the code chunk below :**]{style="color:#3a9c88"}
+
+[[***tm_shape( )***](https://www.rdocumentation.org/packages/tmap/versions/3.3-4/topics/tm_shape) - tmap -]{style="color:#d46e15"} to specify shape object, which in this case is *`mpsz_pop2020`*. This is to set the bounding box for the plot.
+
+[[***tm_fill( )***](https://www.rdocumentation.org/packages/tmap/versions/3.3-4/topics/tm_fill) - tmap -]{style="color:#d46e15"} to specify which column's value to be used for filling the polygons.
+
+-   plotting options for `style` argument :
+
+    -   Each unique value will be a distinct category - **`cat`**
+
+    -   [Discrete gradient](https://r-spatial.github.io/classInt/reference/classIntervals.html) options - **`fixed`**, **`sd`**, **`equal`**, **`pretty`**, **`quantile`**, **`kmeans`**, **`hclust`**, **`bclust`**, **`fisher`**, **`jenks`**, **`dpih`**, **`headtails`**
+
+    -   Continuous gradient options - `cont`, `order` & `log10`
+
+    -   Log scale - **`log10_pretty`**
+
+-   When the style is `fixed`, `breaks` argument should be specified.
+
+-   colour options for `palette` argument : if not sure which palette to use, can input this code chunk at the console for references - `tmaptools::palette_explorer()`
+
+[***tm_layout( )*** - tmap -]{style="color:#d46e15"} to specify title, margins, aspect ratio, frame, legend, etc..
+
+-   `frame` by default is TRUE.
+
+-   `frame.lwd` specify the width of the frame.
+
+-   `asp` - if the aspect ratio is set to '0', the ratio will be adjusted to the aspect ratio of the device.
+
+[***tm_borders( )*** - tmap -]{style="color:#d46e15"} to define the line colour, width, type for polygons' borders.
+
+-   `col` to indicate line colour.
+
+-   `lwd` to specify the line width.
+
+-   `lty` to specify the line type such as `blank`, `dashed`, `dotted`, `dotdash`, `longdash`, `twodash`, `solid`
+
+-   `alpha` to indicate the transparency level. Value between 0 (transparent) and 1 (not transparent). By default is 1.
+
+[[***tm_compass( )***](https://www.rdocumentation.org/packages/tmap/versions/3.3-4/topics/tm_compass) - tmap -]{style="color:#d46e15"} to create compass.
+
+-   Options available for `type` are `arrow`, `4star`, `8star`, `radar`, `rose`. By default is arrow.
+
+[[***tm_scale_bar( )***](https://www.rdocumentation.org/packages/tmap/versions/3.3-4/topics/tm_scale_bar) - tmap -]{style="color:#d46e15"} to create scale bar.
+
+-   `color.dark` - by default is set to black.
+
+-   `color.light` - by default is set to white.
+
+[[***tm_grid( )***](https://www.rdocumentation.org/packages/tmap/versions/3.3-4/topics/tm_grid) - tmap -]{style="color:#d46e15"} to draw graticule lines.
+:::
+
+::: panel-tabset
+## Style : quantile
+
+NOTE : The default colour scheme is `YlOrRd`, missing value will be in grey and default interval binning based on `pretty`.
+
+```{r}
+tmap_mode("plot")
+tm_shape(mpsz_pop2020) +
+  tm_fill("DEPENDENCY",
+          style = "quantile", 
+          palette = "Blues",
+          title = "Dependency ratio") +
+  tm_layout(main.title = "Distribution of Dependency Ratio by planning subzone",
+            main.title.position = "center",
+            main.title.size = 1.2,
+            legend.height = 0.45, 
+            legend.width = 0.35,
+            frame.lwd = 5,
+            asp = 0) +
+  tm_borders(alpha = 0.5) +
+  tm_compass(type = "8star", size = 2) +
+  tm_scale_bar() +
+  tm_grid(alpha = 0.2) +
+  tm_credits("Source: Planning Sub-zone boundary from Urban Redevelopment Authorithy (URA)\n and Population data from Department of Statistics DOS", 
+             position = c("left", "bottom"))
+```
+
+border colour to `white`, number of classes, n to `10`
+
+```{r}
+tm_shape(mpsz_pop2020) +
+  tm_fill("DEPENDENCY",
+          n = 10,
+          style = "quantile", 
+          palette = "Blues",
+          title = "Dependency ratio") +
+  tm_layout(main.title = "Test Elements",
+            main.title.position = "center",
+            main.title.size = 1.2,
+            legend.height = 0.45, 
+            legend.width = 0.35,
+            frame.lwd = 5,
+            asp = 0) +
+  tm_borders(alpha = 0.5, col = 'white') +
+  tm_compass(type = "8star", size = 2) +
+  tm_scale_bar() +
+  tm_grid(alpha = 0.2)
+```
+
+## sd
+
+Apart from style changed to `sd`, palette to `OrRd`, borders to `dashed`, compass to `arrow`, and additional arguments for `scale_bar`.
+
+```{r}
+#| fig-width: 8
+#| fig-asp: 0.68
+tm_shape(mpsz_pop2020) +
+  tm_fill("DEPENDENCY",
+          style = "sd", 
+          palette = "OrRd",
+          title = "Dependency ratio") +
+  tm_layout(main.title = "Test Elements",
+            main.title.position = "center",
+            main.title.size = 1.2,
+            legend.height = 0.45, 
+            legend.width = 0.35,
+            frame.lwd = 5,
+            asp = 0) +
+  tm_borders(alpha = 0.5, lty = 'dashed') +
+  tm_compass(type = "arrow", size = 2) +
+  tm_scale_bar(color.dark = 'red', color.light = 'orange') +
+  tm_grid(alpha = 0.2)
+```
+
+## equal
+
+Style to `equal`, palette to `Greys`, borders to `dotted` and compass to `radar` .
+
+NOTE : be careful between `Greys` and `grey` - the output is entirely different!!!
+
+```{r}
+#| fig-width: 8
+#| fig-asp: 0.68
+tm_shape(mpsz_pop2020) +
+  tm_fill("DEPENDENCY",
+          style = "equal", 
+          palette = "Greys",
+          title = "Dependency ratio") +
+  tm_layout(main.title = "Test Elements",
+            main.title.position = "center",
+            main.title.size = 1.2,
+            legend.height = 0.45, 
+            legend.width = 0.35,
+            frame.lwd = 5,
+            asp = 0) +
+  tm_borders(alpha = 0.5, lty = 'dotted') +
+  tm_compass(type = "radar", size = 2) +
+  tm_scale_bar() +
+  tm_grid(alpha = 0.2)
+```
+
+```{r}
+#| fig-width: 8
+#| fig-asp: 0.68
+tm_shape(mpsz_pop2020) +
+  tm_fill("DEPENDENCY",
+          style = "equal", 
+          palette = "grey",
+          title = "Dependency ratio") +
+  tm_layout(main.title = "Test Elements",
+            main.title.position = "center",
+            main.title.size = 1.2,
+            legend.height = 0.45, 
+            legend.width = 0.35,
+            frame.lwd = 5,
+            asp = 0) +
+  tm_borders(alpha = 0.5, lty = 'dotted') +
+  tm_compass(type = "radar", size = 2) +
+  tm_scale_bar() +
+  tm_grid(alpha = 0.2)
+```
+
+## kmeans
+
+Style to `kmeans` , palette to `YlOrRd`, borders to `longdash` and compass to `rose`.
+
+```{r}
+#| fig-width: 8
+#| fig-asp: 0.68
+tm_shape(mpsz_pop2020) +
+  tm_fill("DEPENDENCY",
+          style = "kmeans",
+          palette = "YlOrRd",
+          title = "Dependency ratio") +
+  tm_layout(main.title = "Test Elements",
+            main.title.position = "center",
+            main.title.size = 1.2,
+            legend.height = 0.45, 
+            legend.width = 0.35,
+            frame.lwd = 5,
+            asp = 0) +
+  tm_borders(alpha = 0.5, lty = 'longdash') +
+  tm_compass(type = "rose", size = 2) +
+  tm_scale_bar() +
+  tm_grid(alpha = 0.2)
+```
+
+## hclust
+
+Style to `hclust` and border to `blank`, and test default without `palette` argument.
+
+```{r}
+#| fig-width: 8
+#| fig-asp: 0.68
+tm_shape(mpsz_pop2020) +
+  tm_fill("DEPENDENCY",
+          style = "hclust",
+          title = "Dependency ratio") +
+  tm_layout(main.title = "Test Elements",
+            main.title.position = "center",
+            main.title.size = 1.2,
+            legend.height = 0.45, 
+            legend.width = 0.35,
+            frame.lwd = 5,
+            asp = 0) +
+  tm_borders(alpha = 0.5, lty = 'blank') +
+  tm_compass(type = "rose", size = 2) +
+  tm_scale_bar() +
+  tm_grid(alpha = 0.2)
+```
+
+## fisher
+
+Style to `fisher`. The output same as `jenks`
+
+```{r}
+#| fig-width: 8
+#| fig-asp: 0.68
+tm_shape(mpsz_pop2020) +
+  tm_fill("DEPENDENCY",
+          style = "fisher",
+          title = "Dependency ratio") +
+  tm_layout(main.title = "Test Elements",
+            main.title.position = "center",
+            main.title.size = 1.2,
+            legend.height = 0.45, 
+            legend.width = 0.35,
+            frame.lwd = 5,
+            asp = 0) +
+  tm_borders(alpha = 0.5) +
+  tm_compass(type = "rose", size = 2) +
+  tm_scale_bar() +
+  tm_grid(alpha = 0.2)
+```
+
+## headtails
+
+Style to `headtails`.
+
+```{r}
+#| fig-width: 8
+#| fig-asp: 0.68
+tm_shape(mpsz_pop2020) +
+  tm_fill("DEPENDENCY",
+          style = "headtails",
+          title = "Dependency ratio") +
+  tm_layout(main.title = "Test Elements",
+            main.title.position = "center",
+            main.title.size = 1.2,
+            legend.height = 0.45, 
+            legend.width = 0.35,
+            frame.lwd = 5,
+            asp = 0) +
+  tm_borders(alpha = 0.5) +
+  tm_compass(type = "rose", size = 2) +
+  tm_scale_bar() +
+  tm_grid(alpha = 0.2)
+```
+:::
+
+### 3.1.2 Binning Customisation
+
+```{r}
+summary(mpsz_pop2020$DEPENDENCY)
+```
+
+```{r}
+tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY",
+          breaks = c(0, 0.60, 0.70, 0.80, 0.90, 19.0)) +
+  tm_borders(alpha = 0.5)
+```
+
+### 3.1.3 Colour Reversion
+
+When the context requires to highlight smaller values, add a '-' prefix.
+
+::: panel-tabset
+## Highlight High Values
+
+```{r}
+tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY",
+          style = "quantile",
+          palette = "Greens") +
+  tm_borders(alpha = 0.5)
+```
+
+## Low Values
+
+```{r}
+tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY",
+          style = "quantile",
+          palette = "-Greens") +
+  tm_borders(alpha = 0.5)
+```
+:::
+
+### 3.1.4 Additional Elements Map Layout
+
+```{r}
+tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY", 
+          style = "jenks", 
+          palette = "Blues", 
+          legend.hist = TRUE, 
+          legend.is.portrait = TRUE,
+          legend.hist.z = 0.1) +
+  tm_layout(main.title = "Distribution of Dependency Ratio by planning subzone \n(Jenks classification)",
+            main.title.position = "center",
+            main.title.size = 1,
+            legend.height = 0.45, 
+            legend.width = 0.35,
+            legend.outside = FALSE,
+            legend.position = c("right", "bottom"),
+            frame = FALSE) +
+  tm_borders(alpha = 0.5)
+```
+
+### 3.1.5 Map Style
+
+Note that element is not referring to the `style` argument under `tm_fill`.
+
+::: panel-tabset
+## Classic
+
+```{r}
+tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY", 
+          style = "quantile", 
+          palette = "-Greens") +
+  tm_borders(alpha = 0.5) +
+  tmap_style("classic")
+```
+
+## Gray
+
+```{r}
+tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY", 
+          style = "quantile", 
+          palette = "-Greens") +
+  tm_borders(alpha = 0.5) +
+  tmap_style("gray")
+```
+
+## Natural
+
+```{r}
+tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY", 
+          style = "quantile", 
+          palette = "-Greens") +
+  tm_borders(alpha = 0.5) +
+  tmap_style("natural")
+```
+
+## Cobalt
+
+```{r}
+tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY", 
+          style = "quantile", 
+          palette = "-Greens") +
+  tm_borders(alpha = 0.5) +
+  tmap_style("cobalt")
+```
+
+## Col_blind
+
+```{r}
+tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY", 
+          style = "quantile", 
+          palette = "-Greens") +
+  tm_borders(alpha = 0.5) +
+  tmap_style("col_blind")
+```
+
+## Albatross
+
+```{r}
+tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY", 
+          style = "quantile", 
+          palette = "-Greens") +
+  tm_borders(alpha = 0.5) +
+  tmap_style("albatross")
+```
+
+## Beaver
+
+```{r}
+tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY", 
+          style = "quantile", 
+          palette = "-Greens") +
+  tm_borders(alpha = 0.5) +
+  tmap_style("beaver")
+```
+
+## BW
+
+```{r}
+tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY", 
+          style = "quantile", 
+          palette = "-Greens") +
+  tm_borders(alpha = 0.5) +
+  tmap_style("bw")
+```
+
+## Watercolor
+
+```{r}
+tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY", 
+          style = "quantile", 
+          palette = "-Greens") +
+  tm_borders(alpha = 0.5) +
+  tmap_style("watercolor")
+```
+:::
+
+To reset the default style -
+
+```{r}
+tmap_style("white")
+```
+
+### 3.2.1 Facet Choropleth Maps
+
+There are 3 ways to plot -
+
+-   multiple values to at least one of the asthetic arguments;
+
+-   define a group-by variable in `tm_facets( )`;
+
+-   create multiple stand-alone maps with `tmap_arrange( )`.
+
+#### 3.2.1.1 Multiple values in `tm_fill( )`
+
+::: panel-tabset
+## Palette : Same Colour
+
+```{r}
+#| fig-width: 8
+#| fig-asp: 0.68
+tm_shape(mpsz_pop2020)+
+  tm_fill(c("YOUNG", "AGED"),
+          style = "equal", 
+          palette = "Blues") +
+  tm_layout(legend.position = c("right", "bottom")) +
+  tm_borders(alpha = 0.5)
+```
+
+## Different Colours
+
+```{r}
+#| fig-width: 8
+#| fig-asp: 0.68
+tm_shape(mpsz_pop2020)+ 
+  tm_polygons(c("DEPENDENCY","AGED"),
+          style = c("equal", "quantile"), 
+          palette = list("Blues","Greens")) +
+  tm_layout(legend.position = c("right", "bottom"))
+```
+:::
+
+#### 3.2.1.2 With`tm_facets( )`
+
+::: {.callout-tip collapse="true" appearance="simple" icon="false"}
+## [**⇳ Usage of the code chunk below :**]{style="color:#3a9c88"}
+
+[***tm_facets( )*** - tmap -]{style="color:#d46e15"} to plot multiple small choropleth maps.
+
+-   `free.coords` - works along with `by` argument. By default is `TRUE`, alphabetically?
+
+-   `drop.units` - By default `TRUE`. When `FALSE`, they are plotted where mapped aesthetics are regarded as missing values.
+:::
+
+::: panel-tabset
+## DROP.UNITS : TRUE
+
+```{r}
+#| fig-width: 12
+#| fig-asp: 0.68
+tm_shape(mpsz_pop2020) +
+  tm_fill("DEPENDENCY",
+          style = "quantile",
+          palette = "Blues",
+          thres.poly = 0) + 
+  tm_facets(by = "REGION_N", 
+            free.coords = TRUE, 
+            drop.units = TRUE) +
+  tm_layout(legend.show = FALSE,
+            title.position = c("center", "center"), 
+            title.size = 20) +
+  tm_borders(alpha = 0.5)
+```
+
+## FALSE
+
+```{r}
+#| fig-width: 12
+#| fig-asp: 0.68
+tm_shape(mpsz_pop2020) +
+  tm_fill("DEPENDENCY",
+          style = "quantile",
+          palette = "Blues",
+          thres.poly = 0) + 
+  tm_facets(by = "REGION_N", 
+            free.coords = TRUE, 
+            drop.units = FALSE) +
+  tm_layout(legend.show = FALSE,
+            title.position = c("center", "center"), 
+            title.size = 20) +
+  tm_borders(alpha = 0.5)
+```
+:::
+
+#### 3.2.1.3 With`tmap_arrange( )`
+
+::: {.callout-tip collapse="true" appearance="simple" icon="false"}
+## [**⇳ Usage of the code chunk below :**]{style="color:#3a9c88"}
+
+[[***tmap_arrange( )***](https://www.rdocumentation.org/packages/tmap/versions/3.3-4/topics/tmap_arrange) - tmap -]{style="color:#d46e15"} to arrange multiple stand-alone maps in grid layout.
+
+-   `sync` - navigation in view mode (zooming and panning) be synchronised. By default is `FALSE`.
+:::
+
+```{r}
+#| fig-width: 14
+#| fig-asp: 0.68
+youngmap <- tm_shape(mpsz_pop2020)+ 
+  tm_polygons("YOUNG", 
+              n = 4,
+              style = "quantile", 
+              palette = "Blues") +
+  tm_layout(legend.height = 0.42, 
+            legend.width = 0.38,
+            frame.lwd = 3)
+
+agedmap <- tm_shape(mpsz_pop2020)+ 
+  tm_polygons("AGED",
+              n = 4,
+              style = "quantile", 
+              palette = "Blues") +
+  tm_layout(legend.height = 0.42, 
+            legend.width = 0.38,
+            frame.lwd = 3)
+
+econactmap <- tm_shape(mpsz_pop2020)+ 
+  tm_polygons("ECONOMY ACTIVE",
+              n = 4,
+              style = "quantile", 
+              palette = "Blues") +
+  tm_layout(legend.height = 0.42, 
+            legend.width = 0.38,
+            frame.lwd = 3)
+
+tmap_arrange(youngmap, agedmap, econactmap, 
+             heights = 1, widths = 1, asp = 2, ncol = 2, nrow = 2, sync = TRUE)
+```
+
+### 3.2.2 Mapping specific Spatial Object for Specific Purposes
+
+NOTE : When `tmap_mode` set to `view`, the histogram will not be able to display correctly. So this function cannot be used along with `legend.hist`.
+
+::: panel-tabset
+## NON-INTERACTIVE
+
+```{r}
+#| fig-width: 12
+#| fig-asp: 0.68
+tm_shape(mpsz_pop2020[mpsz_pop2020$REGION_N == "CENTRAL REGION",]) +
+  tm_fill("DEPENDENCY",
+          style = "quantile", 
+          palette = "-Blues", 
+          legend.hist = TRUE, 
+          legend.is.portrait = TRUE,
+          legend.hist.z = 1) +
+  tm_layout(legend.outside = TRUE,
+            legend.height = 0.8, 
+            legend.width = 5.0,
+            legend.position = c("right", "bottom"),
+            frame = FALSE) +
+  tm_borders(alpha = 0.5, col = 'white')
+```
+
+## INTERACTIVE
+
+```{r}
+#| fig-width: 12
+#| fig-asp: 0.68
+tmap_mode("view")
+tmap_options(check.and.fix = TRUE)
+tm_shape(mpsz_pop2020[mpsz_pop2020$REGION_N == "CENTRAL REGION",]) +
+  tm_fill("DEPENDENCY",
+          style = "quantile", 
+          palette = "-Blues") +
+  tm_view(set.zoom.limits = c(12, 15)) +
+  tm_layout(legend.outside = TRUE,
+            legend.height = 0.6, 
+            legend.width = 5.0) +
+  tm_borders(alpha = 0.68, col = 'white')
+```
+
+:::
