@@ -11,7 +11,9 @@ website:
           - text: Data Wrangling Technique
             href: ho/ho1_1.qmd
           - text: Choropleth Mapping
-            href: ho/ho1_2.qmd 
+            href: ho/ho1_2.qmd
+          - text: 1st Order Spatial Point Patterns Analysis
+            href: ho/ho2_1.qmd 
             
     right:
     - text: Home

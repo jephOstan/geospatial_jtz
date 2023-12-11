@@ -1,0 +1,256 @@
+---
+title: "1st Order Methods"
+subtitle: "Spatial Point Patterns Analysis"
+editor: visual
+date: 8 Dec 2023
+date-modified: "`r Sys.Date()`"
+code-copy: true
+execute: 
+  echo: true
+  eval: true
+  warning: false
+  error: false
+website: 
+    google-analytics: "G-SGM5SNE7BQ"
+format:
+  html:
+    code-overflow: wrap
+    code-fold: false
+    code-summary: "Show the code"
+    css: styles.css
+---
+
+::: {.callout-tip collapse="true" appearance="simple" icon="false"}
+## [**CREDIT**]{style="color:#3a9c88"}
+
+Once again, the credit for the code chunks and the majority content of this post to [Dr. Kam Tin Seong](https://faculty.smu.edu.sg/profile/kam-tin-seong-486 "Geospatial Analytics Lecturer"), my geospatial analytics lecturer at the School of Computing and Information Systems, Singapore Management University. He has helped me tremendously, from having zero knowledge and programming background to comfortably using R for geospatial analysis.
+:::
+
+This post going to explore 2 questions' answers -
+
+1.  Are the childcare centres in Singapore randomly distributed throughout the country?
+2.  Which location has higher concentration of childcare centres?
+
+<br>
+
+# **1. INITIAL**
+
+## **1.1 Loading R Packages**
+
+The following are the packages required for the hands-on exercise :
+
+::: {.callout-tip collapse="true" appearance="simple" icon="false"}
+## [**⇳ Usage of the code chunk below :**]{style="color:#3a9c88"}
+
+[***p_load( )*** - pacman -]{style="color:#d46e15"} to load packages into R environment. This function will attempt to install the package from CRAN or the pacman repository list if it is not installed.
+:::
+
+```{r}
+pacman::p_load(maptools, sf, raster, spatstat, tmap, tidyverse)
+```
+
+<br>
+
+## **1.2 Data Importation**
+
+### 1.2.1 Import Geospatial Data
+
+The data set for childcare centres are obtained from Data.gov.sg is a point feature data.
+
+```{r}
+childcare_sf <- st_read("data/geospatial/PreSchoolsLocation.geojson") %>%
+  st_transform(crs = 3414)
+```
+
+```{r}
+sg_sf <- st_read(dsn = "data/geospatial", 
+                 layer = "CostalOutline")
+```
+
+```{r}
+mpsz_sf = st_read(dsn = "data/geospatial",                                
+                  layer = "MP14_SUBZONE_WEB_PL")
+```
+
+## 1.3 Data Inspection
+
+```{r}
+glimpse(childcare_sf, 70)
+```
+
+### 1.3.1 Reveal Projection System
+
+::: panel-tabset
+## Childcare Centres
+
+```{r}
+st_crs(childcare_sf)
+```
+
+## Singapore National Boundary
+
+```{r}
+st_crs(sg_sf)
+```
+
+## SGP Master Planning Subzone Boundary
+
+```{r}
+st_crs(mpsz_sf)
+```
+:::
+
+<br>
+
+## **1.4 Data Preprocessing :: Projection Transformation**
+
+```{r}
+sg_sf3414 <- st_transform(sg_sf, 
+                          crs = 3414)
+```
+
+```{r}
+mpsz_sf3414 <- st_transform(mpsz_sf, 
+                            crs = 3414)
+```
+
+## **1.5 Data Visualisation**
+
+NOTE : Interactive maps are more resource-intensive than static maps. Rendering many interactive maps in a single document can significantly increase the time it takes to knit the document and can cause performance issues such as slow to load or memory errors, especially if the document is viewed in a web browser. So, try to keep it below 10 usages within an RMarkdown.
+
+```{r}
+tmap_mode('view')
+tm_shape(childcare_sf) +
+  tm_dots() +
+  tm_view(set.zoom.limits = c(11, 16))
+```
+
+```{r}
+tmap_mode('plot')
+```
+
+# 2. DATA PROCESSING
+
+## **2.1 Data Frame Conversion into `Spatial*`** Class
+
+::: {.callout-tip collapse="true" appearance="simple" icon="false"}
+## [**⇳ Usage of the code chunk below :**]{style="color:#3a9c88"}
+
+[[***as_Spatial( )***](https://www.rdocumentation.org/packages/sf/versions/0.3-0/topics/as_Spatial) - sf-]{style="color:#d46e15"} to convert simple feature, `sf`, data frame to `sp` object. Beware of the capital "S".
+:::
+
+```{r}
+childcare <- as_Spatial(childcare_sf)
+mpsz <- as_Spatial(mpsz_sf)
+sg <- as_Spatial(sg_sf)
+```
+
+::: panel-tabset
+## REVEAL : PLANNING ZONE
+
+```{r}
+mpsz
+```
+
+## NATIONAL BOUNDARY
+
+```{r}
+mpsz
+```
+
+## CHILDCARE
+
+```{r}
+childcare
+```
+:::
+
+## **2.2 Data Frame Conversion with `sp`** Package
+
+As one of the earliest packages for handling spatial data in R, the "sp" package provides classes for spatial data types that are prefixed with "Spatial", such as `SpatialPoints`, `SpatialPointsDataFrame`, `SpatialLines`, `SpatialPolygons`, `SpatialPolygonsDataFrame`, etc.
+
+The main differences between `Spatial*` classes and the generic `sp` object:
+
+**`Spatial*` Classes**
+
+These classes are part of the "sp" package, which represents spatial data in R. They are S4 classes, which is a formal class system in R that allows for more rigorous data structure definition and method dispatch.
+
+-   Each `Spatial*` class is tailored to specific types of spatial data & includes slots for metadata such as coordinate reference systems (CRS), bounding box, and attributes.
+    -   `SpatialPoints` & `SpatialPointsDataFrame` handle point data
+    -   `SpatialLines` & `SpatialLinesDataFrame` handle line data
+    -   `SpatialPolygons` & `SpatialPolygonsDataFrame` handle polygon data.
+
+**Generic `sp` Object**
+
+The term "generic sp object" may refer to any `Spatial*` classes since they all inherit from the base `Spatial` class in the "sp" package.
+
+### 2.2.1 Convert Spatial\* class into generic `sp` format
+
+```{r}
+childcare_sp <- as(childcare, "SpatialPoints")
+sg_sp <- as(sg, "SpatialPolygons")
+```
+
+### 2.2.2 Convert generic `sp` format into `spatstat`'s ppp format
+
+::: {.callout-tip collapse="true" appearance="simple" icon="false"}
+## [**⇳ Usage of the code chunk below :**]{style="color:#3a9c88"}
+
+[[***as_ppp( )***](https://www.rdocumentation.org/packages/spatstat/versions/1.64-1/topics/as.ppp) - spatstat -]{style="color:#d46e15"} to convert data into spatial point pattern. This is done so it can be used with spatstat package.
+:::
+
+```{r}
+childcare_ppp <- as(childcare_sp, "ppp")
+childcare_ppp
+```
+
+::: panel-tabset
+## INSPECT DIFFERENCES
+
+```{r}
+plot(childcare_ppp)
+```
+
+## SUMMARY
+
+```{r}
+summary(childcare_ppp)
+```
+
+NOTE : Duplicated points may be due to points coinciding together.
+:::
+
+### 2.2.3  Manage Duplicated Points
+
+First to varify any duplication -
+
+```{r}
+any(duplicated(childcare_ppp))
+```
+
+```{r}
+multiplicity(childcare_ppp)
+```
+
+```{r}
+options(max.print = 10000)
+multiplicity(childcare_ppp)
+```
+
+```{r}
+sum(multiplicity(childcare_ppp) > 1)
+```
+
+::: panel-tabset
+## REVEAL : PLANNING ZONE
+
+```{r}
+mpsz
+```
+
+## SUMMARY
+
+```{r}
+
+```
+:::

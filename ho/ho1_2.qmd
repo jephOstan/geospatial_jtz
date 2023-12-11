@@ -20,6 +20,12 @@ format:
     css: styles.css
 ---
 
+::: {.callout-tip collapse="true" appearance="simple" icon="false"}
+## [**CREDIT**]{style="color:#3a9c88"}
+
+Once again, the credit for the code chunks and the majority content of this post to [Dr. Kam Tin Seong](https://faculty.smu.edu.sg/profile/kam-tin-seong-486 "Geospatial Analytics Lecturer"), my geospatial analytics lecturer at the School of Computing and Information Systems, Singapore Management University. He has helped me tremendously, from having zero knowledge and programming background to comfortably using R for geospatial analysis.
+:::
+
 This post explores the functions in R to plot choropleth maps.
 
 <br>

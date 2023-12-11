@@ -14,7 +14,7 @@ format:
 ::: {.callout-caution collapse="true"}
 ## Content Disclaimer
 
-This micro-site is intended as a personal portfolio and for sharing a learning journey only.
+This micro-site is intended as a personal portfolio based on what I have learned while pursuing my [Master of IT in Business (Analytics)](https://masters.smu.edu.sg/programme/master-of-it-in-business#programmeDetails-tab) at Singapore Management University.
 
 Other than common facts or quotes from other parties, any views, opinions, or comments herein represented in this site are personal and belong solely to the site owner and do not represent those people, institutions or organisations that the owner may or may not be associated with professionally or within a personal capacity unless explicitly stated.
 
