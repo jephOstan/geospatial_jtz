@@ -1,6 +1,6 @@
 ---
 title: "1st Order Methods"
-subtitle: "Spatial Point Patterns Analysis"
+subtitle: "Spatial Point Patterns Analysis (SPPA)"
 editor: visual
 date: 8 Dec 2023
 date-modified: "`r Sys.Date()`"
@@ -23,10 +23,32 @@ format:
 ::: {.callout-tip collapse="true" appearance="simple" icon="false"}
 ## [**CREDIT**]{style="color:#3a9c88"}
 
-Once again, the credit for the code chunks and the majority content of this post to [Dr. Kam Tin Seong](https://faculty.smu.edu.sg/profile/kam-tin-seong-486 "Geospatial Analytics Lecturer"), my geospatial analytics lecturer at the School of Computing and Information Systems, Singapore Management University. He has helped me tremendously, from having zero knowledge and programming background to comfortably using R for geospatial analysis.
+Once again, the credit for the code chunks and the key content of this post to [Dr. Kam Tin Seong](https://faculty.smu.edu.sg/profile/kam-tin-seong-486 "Geospatial Analytics Lecturer"), my geospatial analytics lecturer at the School of Computing and Information Systems, Singapore Management University. He has helped me tremendously, from having zero knowledge and programming background to comfortably using R for geospatial analysis.
+
+Also, credits for some examples and explanation to Uriel, my ChatGPT ( OpenAI ) buddy, named him after the Archangel of Wisdom :)
 :::
 
-This post going to explore 2 questions' answers -
+Spatial Point Pattern Analysis (SPPA) is a branch of spatial statistics that focuses on analysing patterns formed by points in space. This analysis is typically divided into first-order and second-order characteristics.
+
++-------------+--------------------------------------------------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|             | First-Order Analysis                                                                                                                       | Second-Order Analysis                                                                                                                                                       |
++=============+============================================================================================================================================+=============================================================================================================================================================================+
+| Description | Focuses on -                                                                                                                               | Focus on the interactions between points -                                                                                                                                  |
+|             |                                                                                                                                            |                                                                                                                                                                             |
+|             | -   **Density Function** Measures the estimated number of points per unit area, without considering the presence of other points.          | -   **Ripley's K-function** A cumulative measure of spatial dependence that evaluates whether the pattern exhibits clustering, randomness, or regularity at various scales. |
+|             |                                                                                                                                            |                                                                                                                                                                             |
+|             | -   **Inhomogeneous Poisson Process** A model where the density or intensity of points can vary from place to place.                       | -   **Pair Correlation Function** Similar to the K-function but gives a non-cumulative measure of spatial dependence.                                                       |
+|             |                                                                                                                                            |                                                                                                                                                                             |
+|             | -   **Covariate Analysis** Examining how the density or intensity of points is related to environmental variables or other covariates.     | -   **Cross K-function** Used for multivariate point patterns to measure interactions between points of different types.                                                    |
++-------------+--------------------------------------------------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Use Cases   | **Ecological Studies** Estimating the intensity of tree occurrences in different parts of a forest to identify areas of high tree density. | **Crime Analysis** Understanding the spatial clustering of crime incidents to discern patterns and possibly underlying causes.                                              |
+|             |                                                                                                                                            |                                                                                                                                                                             |
+|             | **Epidemiology** Mapping the intensity of disease cases to identify hotspots for targeted public health interventions.                     | **Ecology** Studying the inter-species interactions in an ecosystem by analyzing the spatial relationships between two different species.                                   |
+|             |                                                                                                                                            |                                                                                                                                                                             |
+|             | **Urban Planning** Analyzing the intensity of commercial establishments across a city to inform zoning decisions.                          | **Retail Analysis** Examining the clustering of similar retail stores to understand competitive behavior and the impact on consumer choice.                                 |
++-------------+--------------------------------------------------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+This post is exploring the first-order to address the following questions -
 
 1.  Are the childcare centres in Singapore randomly distributed throughout the country?
 2.  Which location has higher concentration of childcare centres?
@@ -72,6 +94,8 @@ mpsz_sf = st_read(dsn = "data/geospatial",
                   layer = "MP14_SUBZONE_WEB_PL")
 ```
 
+<br>
+
 ## 1.3 Data Inspection
 
 ```{r}
@@ -114,6 +138,8 @@ mpsz_sf3414 <- st_transform(mpsz_sf,
                             crs = 3414)
 ```
 
+<br>
+
 ## **1.5 Data Visualisation**
 
 NOTE : Interactive maps are more resource-intensive than static maps. Rendering many interactive maps in a single document can significantly increase the time it takes to knit the document and can cause performance issues such as slow to load or memory errors, especially if the document is viewed in a web browser. So, try to keep it below 10 usages within an RMarkdown.
@@ -121,13 +147,16 @@ NOTE : Interactive maps are more resource-intensive than static maps. Rendering 
 ```{r}
 tmap_mode('view')
 tm_shape(childcare_sf) +
-  tm_dots() +
+  tm_dots(alpha = 0.5,
+          size = 0.01) +
   tm_view(set.zoom.limits = c(11, 16))
 ```
 
 ```{r}
 tmap_mode('plot')
 ```
+
+<br>
 
 # 2. DATA PROCESSING
 
@@ -165,6 +194,8 @@ childcare
 ```
 :::
 
+<br>
+
 ## **2.2 Data Frame Conversion with `sp`** Package
 
 As one of the earliest packages for handling spatial data in R, the "sp" package provides classes for spatial data types that are prefixed with "Spatial", such as `SpatialPoints`, `SpatialPointsDataFrame`, `SpatialLines`, `SpatialPolygons`, `SpatialPolygonsDataFrame`, etc.
@@ -190,6 +221,8 @@ The term "generic sp object" may refer to any `Spatial*` classes since they all 
 childcare_sp <- as(childcare, "SpatialPoints")
 sg_sp <- as(sg, "SpatialPolygons")
 ```
+
+<br>
 
 ### 2.2.2 Convert generic `sp` format into `spatstat`'s ppp format
 
@@ -220,20 +253,24 @@ summary(childcare_ppp)
 NOTE : Duplicated points may be due to points coinciding together.
 :::
 
-### 2.2.3  Manage Duplicated Points
+<br>
 
-First to varify any duplication -
+### 2.2.3 Manage Duplicated Points
+
+#### 2.2.3.1 Verify any duplication
 
 ```{r}
 any(duplicated(childcare_ppp))
 ```
 
 ```{r}
-multiplicity(childcare_ppp)
+options(max.print = 5000)
 ```
 
+NOTE : Set the `max.print` to above 2,290 if there is a warning message - "\[ reached getOption("max.print") - - omitted n entries \] when run the code chunk below.
+
 ```{r}
-options(max.print = 10000)
+#| eval: false
 multiplicity(childcare_ppp)
 ```
 
@@ -241,16 +278,282 @@ multiplicity(childcare_ppp)
 sum(multiplicity(childcare_ppp) > 1)
 ```
 
+#### 2.2.3.2 Visualise the duplication
+
+```{r}
+# create new object that captures each point multiplicity
+childcare_multiplicity <- multiplicity(childcare_ppp)
+
+# Convert the ppp object back to a `SpatialPoints` data frame
+childcare_spdf <- as(childcare_ppp, "SpatialPoints")
+
+# Add the multiplicity information to the `SpatialPoints` data frame
+childcare_spdf$duplication <- childcare_multiplicity > 1
+
+# Convert back to an sf object
+childcare_test <- st_as_sf(childcare_spdf)
+
+# Ensure the projection is correct.
+childcare_test3414 <- st_set_crs(childcare_test, 3414)
+```
+
+```{r}
+tm_shape(childcare_test3414) +
+  tm_dots(col = "duplication", 
+          palette = c("black", "red"), 
+          size = 0.1,
+          title = 'Duplication') +
+  tm_layout(main.title = "DATA POINT DUPLICATIONS",
+            main.title.size = 1.2)
+```
+
+#### 2.2.3.2 Overcome duplication
+
+::: {.callout-tip collapse="true" appearance="simple" icon="false"}
+## [**⇳ Usage of the code chunk below :**]{style="color:#3a9c88"}
+
+[***rjitter( )*** - spatstat -]{style="color:#d46e15"} to introduce independent random perturbation to each point in a point pattern.
+
+-   `retry` when set to `TRUE` will perturb the point that lies outside the window of the original point pattern. Else, it will be lost.
+
+-   `nsim` set the quantity of simulated realisation to be generated.
+
+-   `drop` by default `TRUE` to produce point pattern. Else, a list containing point patterns.
+:::
+
 ::: panel-tabset
-## REVEAL : PLANNING ZONE
+## SOLUTION : JITTERING
 
 ```{r}
-mpsz
+childcare_ppp_jit <- rjitter(childcare_ppp,
+                             retry = TRUE, 
+                             nsim = 1, 
+                             drop = TRUE)
 ```
 
-## SUMMARY
+```{r}
+rjitter(childcare_ppp,
+        retry = TRUE,
+        nsim = 2,
+        drop = FALSE)
+```
+
+```{r}
+any(duplicated(childcare_ppp_jit))
+```
 
 ```{r}
 
+childcare_ppp_jit0 <- multiplicity(childcare_ppp_jit)
+
+# Convert the ppp object back to a `SpatialPoints` data frame
+childcare_spdf0 <- as(childcare_ppp_jit, "SpatialPoints")
+
+# Add the multiplicity information to the `SpatialPoints` data frame
+childcare_spdf0$duplication <- childcare_ppp_jit0 > 1
+
+# Convert back to an sf object
+childcare_test0 <- st_as_sf(childcare_spdf0)
+
+# Ensure the projection is correct.
+childcare_test34140 <- st_set_crs(childcare_test0, 3414)
 ```
+
+```{r}
+tm_shape(childcare_test34140) +
+  tm_dots(col = "duplication", 
+          palette = c("black", "red"), 
+          size = 0.1,
+          title = 'Duplication') +
+  tm_layout(main.title = "DATA POINT DUPLICATIONS",
+            main.title.size = 1.2)
+```
+:::
+
+<br>
+
+## 2.3 Creating `owin` Object
+
+`owin` short for "observation window". The region within this window where the spatial data (points, lines or polygons) are observed. The `owin` function is fundamental to define the spatial context for your point pattern analysis. It ensures that any spatial patterns or processes you are studying are constrained to a specific area of interest.
+
+In the context of `spatstat` and point pattern analysis, this `window` can be interpreted as the outermost boundary or the extent of the study area for spatial data in other types of spatial analysis, such as `tm_shape()` from `tmap`. This extent defines the area over which the map is drawn and is determined by the bounding coordinates of the spatial object you are plotting.
+
+::: {.callout-tip collapse="true" appearance="simple" icon="false"}
+## [**⇳ Usage of the code chunk below :**]{style="color:#3a9c88"}
+
+[***owin( )*** - spatstat -]{style="color:#d46e15"} to create a window, i.e. Singapore land boundary.
+
+-   NOTE : There are 2 ways to perform this function. Below code chunk is the alternative approach.
+:::
+
+```{r}
+sg_owin <- as(sg_sp, "owin")
+```
+
+```{r}
+#| fig-width: 6
+#| fig-asp: 0.68
+plot(sg_owin)
+```
+
+```{r}
+summary(sg_owin)
+```
+
+<br>
+
+## 2.4 Combining `owin` Object & Point Events Object
+
+```{r}
+childcareSG_ppp = childcare_ppp[sg_owin]
+```
+
+```{r}
+summary(childcareSG_ppp)
+```
+
+```{r}
+#| fig-width: 8
+#| fig-asp: 0.68
+plot(childcareSG_ppp)
+```
+
+<br>
+
+# 3. FIRST-ORDER SPPA
+
+This section will focus on computing the following -
+
+-   Kernel Density Estimation (KDE) layer.
+
+-   Confirmatory SPPA using Nearest Neighbour statistic.
+
+## 3.1 Kernel Density Estimation
+
+**KDE** is a non-parametric way (doesn't assume the childcare centres to follow any particular pattern or rule) to estimate the probability density function of points across the study area. This technique is useful to facilitate stakeholders to visualise the distribution of childcare centres across Singapore and identify areas of high & low concentrations.
+
+*NOTE : For beginners who are confused - this statement "estimating the probability density" is a statistical way of talking about how likely you are to find a childcare centre if you were to look at a random spot in Singapore. KDE takes the actual locations of all the childcare centres to make an educated guess (estimate) of the likelihood (probability) or change of finding a centre in any given area.*
+
+There are multiple approaches for KDE -
+
+-   Automatic bandwidth selection method
+
+### 3.1.1 Automatic bandwidth selection method
+
+::: {.callout-tip collapse="true" appearance="simple" icon="false"}
+## [**⇳ Usage of the code chunk below :**]{style="color:#3a9c88"}
+
+[[***density( )***](https://www.rdocumentation.org/packages/spatstat.core/versions/2.3-1/topics/density.ppp) - spatstat -]{style="color:#d46e15"} to compute a kernel smoothed intensity function from a point pattern.
+
+-   `Sigma` argument to adjust the level of smoothing with a single numerical value as the smoothing bandwidth. There are 4 functions, `bw.diggle`, `bw.CvL`, `bw.scott` or `bw.ppl` to perform automatic bandwidth using cross-validation. If this argument is not specified, the isotropic Gaussian kernel will be used to compute the sigma value.
+
+    *NOTE : **Bandwidth (`sigma`)**: Think of the bandwidth as the width of the smoothing brush that you use when you're painting the intensity of points on a map. A larger brush (bandwidth) paints over a larger area, smoothing out the details and showing a broader trend. A smaller brush reveals more local detail but can be noisier.*
+
+-   `edge` to apply edge effect bias correction for the intensity estimation when `TRUE`. Default is `TRUE`.
+
+-   `kernel` default value is "gaussian".
+:::
+
+::: panel-tabset
+## SIGMA : bw.diggle
+
+This method uses the average distance between points and the total area of the study region to determine an appropriate bandwidth.
+
+```{r}
+kde_childcareSG_bw <- density(childcareSG_ppp,
+                              sigma = bw.diggle,
+                              edge = TRUE,
+                              kernel = "gaussian")
+plot(kde_childcareSG_bw)
+```
+
+## bw.scott
+
+This option is useful for estimating gradual trend as it produces a larger bandwidth than diggle.
+
+According to the Scott's rule : the bandwidth is proportional to n^-1/(d+4)^ where,
+
+-   n = the number of points
+
+    -   Having more points means smaller bandwidth will be - have more information, thus can afford to look at finer details.
+
+```{=html}
+<!-- -->
+```
+-   d = the number of spatial dimensions, typically 2 for a map (x & y dimensions).
+
+    -   Having more dimensions means larger the bandwidth will be.
+
+*NOTE : `bw.scott` has an option to use isotropic bandwidth. When `isotropic` = `TRUE`, use same bandwidth in all directions. If `FALSE` (default), calculate different bandwidths for different directions. The latter is useful when the points distribution is different in the x and y directions.*
+
+```{r}
+#isotropic is FALSE(default)
+kde_childcareSG_bwsct <- density(childcareSG_ppp,
+                                 sigma = bw.scott,
+                                 edge = TRUE,
+                                 kernel = "gaussian")
+plot(kde_childcareSG_bwsct)
+```
+
+```{r}
+#isotropic set to TRUE, the differences are observed btw these 2 plots.
+kde_childcareSG_bwsctf <- density(childcareSG_ppp,
+                                 sigma = bw.scott(childcareSG_ppp, 
+                                                  isotropic = TRUE),
+                                 edge = TRUE,
+                                 kernel = "gaussian")
+plot(kde_childcareSG_bwsctf)
+```
+
+## bw.CvL
+
+Uses Cronie & van Lieshout's Criterion to select the smoothing bandwidth.
+
+CvL(σ) = ( \|W\| - Sum \[ 1 / λ̂ (x~i~) \] )^2^
+
+The goal is to find the bandwidth σ that minimise the discrepancy between the area of the observation window and the sum of reciprocal estimated intensity.
+
+-   This is done by identifying the balance where the estimated density is neither too wiggly (overfitting to the data points) nor too smooth (underfitting and missing important features).
+
+-   The bandwidth that gives the lowest value of the criterion is chosen as the best one.
+
+-   Meaning, according to cross-validation likelihood, the selected bandwidth will provide the most reliable density estimate that perform well both in representing the high-density areas (where points are clustered) and avoiding to be mislead by random fluctuations or noise in the spatial distribution of the childcare centres.
+
+```{r}
+kde_childcareSG_bwcvl <- density(childcareSG_ppp,
+                                 sigma = bw.CvL,
+                                 edge = TRUE,
+                                 kernel = "gaussian")
+plot(kde_childcareSG_bwcvl)
+```
+
+## bw.frac
+
+This option is an quantile-based bandwidth. The σ is computed as a quantile of the distance between two independent random points in the window. By default is the lower quartile of this distribution.
+
+```{r}
+kde_childcareSG_bwfra <- density(childcareSG_ppp,
+                              sigma = bw.frac,
+                              edge = FALSE,
+                              kernel = "gaussian")
+plot(kde_childcareSG_bwfra)
+```
+
+## bw.ppl
+
+ppl shorts for "plug-in predictor", estimates the bandwidth that would minimise the mean squared error of the density estimate. Compared to `bw.diggle`, `bw.ppl` can be more accurate but computationally more intensive.
+
+```{r}
+kde_childcareSG_bwppl <- density(childcareSG_ppp,
+                              sigma = bw.ppl,
+                              edge = FALSE,
+                              kernel = "gaussian")
+plot(kde_childcareSG_bwppl)
+```
+:::
+
+::: panel-tabset
+## TAB1 : TEMPLATE
+
+## TAB2
 :::
