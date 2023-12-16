@@ -693,10 +693,7 @@ After comparing the outputs from these options, for the context of this post, th
 
 -   `bw.diggle` option is more suitable when the goal is to detect a single tight cluster among random noise.
 
-```{r}
-plot(kde_childcareSG_bwdig, main = "bw.diggle")
-plot(kde_childcareSG_bwppl, main = "bw.ppl")
-```
+<br>
 
 ### 3.1.3 Different Kernel Methods
 
@@ -779,6 +776,8 @@ plot(density(childcareSG_ppp.km,
      main = "Disc")
 ```
 :::
+
+Visualise at in a single view -
 
 ::: {.callout-tip collapse="true" appearance="simple" icon="false"}
 ## [**⇳ Usage of the code chunk below :**]{style="color:#3a9c88"}
@@ -985,6 +984,8 @@ childcare_jw_ppp.km = rescale(childcare_jw_ppp, 1000, "km")
 Step 7 - Visualise
 
 ```{r}
+#| fig-width: 14
+#| fig-asp: 0.68
 par(mfrow = c(2,2))
 plot(childcare_pg_ppp.km, main = "Punggol")
 plot(childcare_tm_ppp.km, main = "Tampines")
@@ -995,6 +996,8 @@ plot(childcare_jw_ppp.km, main = "Jurong West")
 Step 8 - Compute KDE
 
 ```{r}
+#| fig-width: 14
+#| fig-asp: 0.68
 par(mfrow = c(2,2))
 plot(density(childcare_pg_ppp.km, 
              sigma = bw.diggle, 
@@ -1024,6 +1027,8 @@ plot(density(childcare_jw_ppp.km,
 Step 9 - Compute fixed bandwidth KDE
 
 ```{r}
+#| fig-width: 14
+#| fig-asp: 0.68
 par(mfrow = c(2,2))
 plot(density(childcare_ck_ppp.km, 
              sigma = 0.25, 
@@ -1050,6 +1055,60 @@ plot(density(childcare_tm_ppp.km,
      main = "Tampines")
 ```
 :::
+
+## 3.2 Nearest Neighbour Analysis
+
+test hypotheses are -
+
+Ho = The distribution of childcare services are randomly distributed.
+
+H1= The distribution of childcare services are not randomly distributed.
+
+The 95% confident interval will be used.
+
+::: {.callout-tip collapse="true" appearance="simple" icon="false"}
+## [**⇳ Usage of the code chunk below :**]{style="color:#3a9c88"}
+
+[[***clarkevans.test( )***](https://www.rdocumentation.org/packages/spatstat/versions/1.63-3/topics/clarkevans.test) - statspat -]{style="color:#d46e15"} to perform Clark-Evans test of aggregation for a spatial point pattern.
+
+-   `correction` argument has 4 options of edge correction - `none`, `Donnelly` , `guard` and `cdf`. Other none and all, the rest aims to provide a more accurate estimate of the mean nearest neighbour distance by accounting for the potential bias introduced by points near the edges of the study region.
+:::
+
+::: panel-tabset
+## CORRECTION : NONE
+
+```{r}
+clarkevans.test(childcareSG_ppp,
+                correction = "none",
+                clipregion = "sg_owin",
+                alternative = c("clustered"),
+                nsim = 99)
+```
+
+## DONNELLY
+
+Not applicable. Donnelly correction is only available for rectangular windows.
+
+## GUARD
+
+Not applicable??
+
+Error: Can't interpret W as a window.
+
+## CDF
+
+```{r}
+clarkevans.test(childcareSG_ppp,
+                correction = "cdf",
+                clipregion = "sg_owin",
+                alternative = c("clustered"),
+                nsim = 99)
+```
+:::
+
+```{r}
+#| eval: false
+```
 
 ::: panel-tabset
 ## TAB1 : TEMPLATE
